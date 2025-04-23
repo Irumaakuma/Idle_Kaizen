@@ -226,7 +226,7 @@ async function simulateCombat(playerA, playerB) {
 window.playerFictif = {
   discordUsername: "Dummy#0001",
   skills: {
-    force: { level: 1 },
+    force: { level: 100 },
     vigueur: { level: 1 },
     vitalite: { level: 1 },
     agilite: { level: 1 },
