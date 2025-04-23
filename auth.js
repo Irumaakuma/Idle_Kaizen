@@ -84,7 +84,8 @@ function getSaveData() {
     skills: cleanSkills,
     jobs: { ...player.jobs },
     questsCompleted: player.questsCompleted,
-    faction: player.faction // 👈 Ne surtout pas oublier ça !
+    faction: player.faction, // 👈 Ne surtout pas oublier ça !
+    discordUsername: currentUsername || "???",
   };
 }
 
