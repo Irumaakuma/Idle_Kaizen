@@ -219,20 +219,20 @@ async function simulateCombat(playerA, playerB) {
     await nextTurn();
   }
 
-  const playerFictif = {
-    discordUsername: "Dummy#0001",
-    skills: {
-      force: { level: 1 },
-      vigueur: { level: 1 },
-      vitalite: { level: 1 },
-      agilite: { level: 1 },
-      dexterite: { level: 1 }
-    }
-  };
-  
 
   await nextTurn();
 }
+
+window.playerFictif = {
+  discordUsername: "Dummy#0001",
+  skills: {
+    force: { level: 1 },
+    vigueur: { level: 1 },
+    vitalite: { level: 1 },
+    agilite: { level: 1 },
+    dexterite: { level: 1 }
+  }
+};
 
 
 
