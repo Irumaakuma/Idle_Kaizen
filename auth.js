@@ -3,7 +3,7 @@ let currentUsername = null;
 
 const clientId = "1363336518181195817";
 const redirectUri = "https://kaizen-backend-fkod.onrender.com/auth/discord/callback";
-const webhookURL = "https://discord.com/api/webhooks/1363338362244567141/...";
+const webhookURL = "https://discord.com/api/webhooks/1363338362244567141/lM6-jUxgdgyw1eBrhgH70BbQNnco4If-AExWOijdVmcTgPI49CIrll09yZqQgleAVQoA";
 
 // Auth vers backend
 function loginWithDiscord() {
