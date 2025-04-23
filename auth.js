@@ -83,9 +83,11 @@ function getSaveData() {
     maxAge: player.maxAge,
     skills: cleanSkills,
     jobs: { ...player.jobs },
-    questsCompleted: player.questsCompleted
+    questsCompleted: player.questsCompleted,
+    faction: player.faction // 👈 Ne surtout pas oublier ça !
   };
 }
+
 
 function savePlayerData(userId) {
   fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
@@ -106,13 +108,17 @@ function savePlayerData(userId) {
 
 async function loadPlayerData(userId) {
   const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
-    headers: { "Authorization": userId }  // 🟢 IMPORTANT
+    headers: { "Authorization": userId }
   });
 
   const data = await res.json();
 
   if (data) {
     Object.assign(player, data);
+
+    if (data.faction) {
+      player.faction = data.faction; // ✅ restauration manuelle si besoin
+    }
 
     const rebuiltSkills = {};
     for (let id in data.skills) {
@@ -127,6 +133,7 @@ async function loadPlayerData(userId) {
       rebuiltSkills[id].level = s.level;
       rebuiltSkills[id].xp = s.xp;
     }
+
     player.skills = rebuiltSkills;
 
     jobs.forEach(job => {
@@ -141,6 +148,7 @@ async function loadPlayerData(userId) {
     togglePvpButton();
   }
 }
+
 
 function forceSave() {
   if (currentUserId) {
