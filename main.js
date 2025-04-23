@@ -86,7 +86,8 @@ function renderPvpTab() {
   loadAllPlayers().then(players => {
     const list = document.getElementById("player-list");
     players
-      .filter(p => p.faction !== "Civil" && p.username && !p.username.includes("???"))
+    players
+      .filter(p => p.username && !p.username.includes("???")) // on garde tout sauf les anonymes  
       .forEach(player => {
         const pseudo = player.username.split("#")[0];
         const block = document.createElement("div");
@@ -163,10 +164,11 @@ async function challengePlayer(id) {
 }
 
 function simulateCombat(playerA, playerB) {
-  if (!["marine", "pirate"].includes(player.faction)) {
-    showToast("❌ Tu dois appartenir à une faction pour participer au PvP !");
-    return;
-  }
+// if (!["marine", "pirate"].includes(player.faction)) {
+//   showToast("❌ Tu dois appartenir à une faction pour participer au PvP !");
+//   return;
+// }
+
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
   const getSkillBonus = (skillId, method) => {
