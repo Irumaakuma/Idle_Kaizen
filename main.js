@@ -385,6 +385,38 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 100);
 });
 
+
+function startGame() {
+  console.log("🚀 Lancement du jeu avec currentUserId =", currentUserId);
+  updateUI();
+
+  setTimeout(() => {
+    if (typeof player !== "undefined") {
+      setInterval(updateGameLoop, 1000 / updateSpeed);
+    }
+  }, 100);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ DOM prêt, vérification de currentUserId...");
+
+  if (currentUserId) {
+    startGame();
+  } else {
+    // Attendre que checkLogin() ait initialisé currentUserId
+    setTimeout(() => {
+      console.log("🔁 Retry après 200ms → currentUserId =", currentUserId);
+      if (currentUserId) {
+        startGame();
+      } else {
+        console.warn("❌ currentUserId est toujours null. Connexion Discord échouée ou non encore prête.");
+      }
+    }, 200);
+  }
+});
+
+
+
 window.switchTab = switchTab;
 window.triggerRebirth = triggerRebirth;
 window.challengePlayer = challengePlayer;
