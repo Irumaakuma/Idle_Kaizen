@@ -75,7 +75,7 @@ function savePlayerData(userId) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": userId // 👈 OBLIGATOIRE pour que le serveur accepte
+      "Authorization": userId  // 🟢 C'EST OBLIGATOIRE
     },
     body: JSON.stringify(getSaveData())
   }).then(() => {
@@ -89,7 +89,7 @@ function savePlayerData(userId) {
 
 async function loadPlayerData(userId) {
   const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
-    headers: { "Authorization": userId }
+    headers: { "Authorization": userId }  // 🟢 IMPORTANT
   });
 
   const data = await res.json();
