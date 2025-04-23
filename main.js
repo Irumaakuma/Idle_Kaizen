@@ -420,3 +420,4 @@ window.renderPvpTab = renderPvpTab;
 window.simulateCombat = simulateCombat;
 window.unlockSkillsProgressively = unlockSkillsProgressively;
 window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
+window.updateUI = updateUI;
