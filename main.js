@@ -45,12 +45,13 @@ function switchTab(tabId) {
       showToast("❌ Connecte-toi avec Discord pour accéder au PvP.");
       return;
     }
-
-    if (!player.faction || player.faction.toLowerCase() === "civil") {
-      showToast("❌ Tu dois rejoindre une faction pour accéder au PvP.");
-      return;
-    }
+    // ❌ SUPPRIMER cette condition ↓
+    // if (!player.faction || player.faction.toLowerCase() === "civil") {
+    //   showToast("❌ Tu dois rejoindre une faction pour accéder au PvP.");
+    //   return;
+    // }
   }
+  
 
   document.querySelectorAll(".tab-content").forEach(div => div.style.display = "none");
   document.getElementById(`${tabId}-tab`).style.display = "block";
@@ -74,9 +75,11 @@ function renderPvpTab() {
   }
 
   if (player.faction === "Civil") {
-    container.innerHTML = `<h2>PvP</h2><p style='color: #ff5252;'>❌ Vous devez rejoindre une faction pour accéder au PvP.</p>`;
-    return;
+    // ❌ SUPPRIMER ce bloc ↓
+    // container.innerHTML = `<h2>PvP</h2><p style='color: #ff5252;'>❌ Vous devez rejoindre une faction pour accéder au PvP.</p>`;
+    // return;
   }
+  
 
   container.innerHTML = "<h2>Joueurs disponibles</h2><div id='player-list'></div>";
 
@@ -151,9 +154,11 @@ async function loadOpponentData(opponentId) {
 async function challengePlayer(id) {
   const opponent = await loadOpponentData(id);
   if (opponent.faction === "Civil") {
-    showToast("❌ Tu ne peux pas défier un joueur Civil.");
-    return;
+    // ❌ SUPPRIMER ce bloc ↓
+    // showToast("❌ Tu ne peux pas défier un joueur Civil.");
+    // return;
   }
+  
   simulateCombat(player, opponent);
 }
 
