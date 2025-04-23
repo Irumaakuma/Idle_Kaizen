@@ -19,10 +19,16 @@ function showToast(message) {
   }, 3000);
 }
 
-// ✅ Initialisation principale
 function initGame() {
   checkLogin();
-  updateUI();
+
+  // Attendre que main.js ait chargé updateUI
+  const waitForUpdateUI = setInterval(() => {
+    if (typeof updateUI === "function") {
+      clearInterval(waitForUpdateUI);
+      updateUI();
+    }
+  }, 50);
 
   setTimeout(() => {
     if (typeof player !== "undefined") {
@@ -32,6 +38,7 @@ function initGame() {
 
   setInterval(autoSaveLoop, 10000);
 }
+
 
 // ✅ Système d'héritage basé sur la compétence liée au job
 
