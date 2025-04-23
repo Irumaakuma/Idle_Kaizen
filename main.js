@@ -137,36 +137,29 @@ async function challengePlayer(id) {
   simulateCombat(player, opponent);
 }
 
-function simulateCombat(playerA, playerB) {
+async function simulateCombat(playerA, playerB) {
+  const log = [`⚔️ Combat entre ${playerA.name || "Toi"} et ${playerB.name || "Adversaire"}`];
+  const container = document.getElementById("pvp-tab");
+  const logBox = document.createElement("pre");
+  logBox.className = "pvp-log";
+  logBox.style.background = "#111";
+  logBox.style.color = "#0f0";
+  logBox.style.padding = "10px";
+  container.appendChild(logBox);
 
+  function addLogLine(line) {
+    log.push(line);
+    logBox.innerHTML = log.join("<br>");
+  }
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
-  const getSkillBonus = (skillId, method) => {
-    const skill = player.skills[skillId];
-    return skill?.[method]?.(skill.level) || 0;
-  };
-
-  const bonusDegats = getSkillBonus("karate_homme_poisson", "getBonusDamage");
-  const bonusEsquive = getSkillBonus("rokushiki", "getBonusDodge");
-  const tripleChance = getSkillBonus("style_3_sabres", "getTripleHitChance");
-  const ignoreDefense = getSkillBonus("frappe_du_diable", "getIgnoreDefense");
-
-  const hakiArmementLvl = player.skills.haki_armement_1?.level || 0;
-  const hakiArmementBoost = player.skills.haki_armement_1?.unlocked ? (1 + hakiArmementLvl * 2 / 100) : 1;
-  const hakiObservationLvl = player.skills.haki_observation_1?.level || 0;
-  const hakiObservationBoost = player.skills.haki_observation_1?.unlocked ? (1 + hakiObservationLvl * 2 / 100) : 1;
-  const hakiRoiLvl = player.skills.haki_roi?.level || 0;
-  const skipChance = player.skills.haki_roi?.unlocked ? hakiRoiLvl / 1000 : 0;
-
   const statsA = {
     name: "Toi",
-    hp: 10 + getStat(playerA, "vitalite") * 3 * hakiArmementBoost,
-    force: (getStat(playerA, "force") + bonusDegats) * hakiArmementBoost,
-    vigueur: getStat(playerA, "vigueur") * hakiArmementBoost,
-    agilite: getStat(playerA, "agilite") * hakiObservationBoost,
-    dexterite: getStat(playerA, "dexterite") * hakiObservationBoost,
-    intelligence: getStat(playerA, "intelligence") * hakiObservationBoost,
-    endurance: (getStat(playerA, "endurance") || 0) * hakiArmementBoost
+    hp: 10 + getStat(playerA, "vitalite") * 3,
+    force: getStat(playerA, "force"),
+    vigueur: getStat(playerA, "vigueur"),
+    agilite: getStat(playerA, "agilite"),
+    dexterite: getStat(playerA, "dexterite")
   };
 
   const statsB = {
@@ -178,61 +171,49 @@ function simulateCombat(playerA, playerB) {
     dexterite: getStat(playerB, "dexterite")
   };
 
-  const log = [`⚔️ Combat entre ${statsA.name} et ${statsB.name}`];
   let tour = 1;
-  while (statsA.hp > 0 && statsB.hp > 0) {
-    log.push(`--- Tour ${tour} ---`);
-    log.push(`${statsA.name} PV: ${statsA.hp} | ${statsB.name} PV: ${statsB.hp}`);
+  async function nextTurn() {
+    addLogLine(`--- Tour ${tour} ---`);
+    addLogLine(`${statsA.name} PV: ${statsA.hp} | ${statsB.name} PV: ${statsB.hp}`);
 
-    let esquiveB = statsB.agilite - statsA.dexterite - bonusEsquive;
-    if (Math.random() * 100 >= Math.max(0, esquiveB)) {
-      let dmg = Math.max(1, statsA.force - statsB.vigueur);
-      if (Math.random() * 100 < tripleChance) {
-        dmg *= 3;
-        log.push(`💥 ${statsA.name} déclenche 3 sabres !`);
-      }
-      dmg += bonusDegats;
+    // A attaque B
+    if (Math.random() * 100 >= statsB.agilite - statsA.dexterite) {
+      const dmg = Math.max(1, statsA.force - statsB.vigueur);
       statsB.hp -= dmg;
-      log.push(`${statsA.name} inflige ${dmg.toFixed(1)} dégâts à ${statsB.name}`);
+      addLogLine(`${statsA.name} inflige ${dmg.toFixed(1)} dégâts à ${statsB.name}`);
     } else {
-      log.push(`${statsB.name} esquive l'attaque de ${statsA.name}`);
+      addLogLine(`${statsB.name} esquive l'attaque de ${statsA.name}`);
     }
 
-    if (statsB.hp <= 0) break;
+    if (statsB.hp <= 0) {
+      addLogLine(`🏆 Victoire de ${statsA.name}`);
+      return;
+    }
 
-    const skipEnemyTurn = Math.random() < skipChance;
-    if (skipEnemyTurn) {
-      log.push("👑 L’adversaire est intimidé par ton Haki des Rois et perd son tour !");
+    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 secondes
+
+    // B attaque A
+    if (Math.random() * 100 >= statsA.agilite - statsB.dexterite) {
+      const dmg = Math.max(1, statsB.force - statsA.vigueur);
+      statsA.hp -= dmg;
+      addLogLine(`${statsB.name} inflige ${dmg.toFixed(1)} dégâts à ${statsA.name}`);
     } else {
-      let esquiveA = statsA.agilite - statsB.dexterite;
-      if (Math.random() * 100 >= Math.max(0, esquiveA)) {
-        let rawDmg = statsB.force;
-        let defenseA = statsA.vigueur * (1 - ignoreDefense);
-        let dmg = Math.max(1, rawDmg - defenseA);
-        statsA.hp -= dmg;
-        log.push(`${statsB.name} inflige ${dmg.toFixed(1)} dégâts à ${statsA.name}`);
-      } else {
-        log.push(`${statsA.name} esquive l'attaque de ${statsB.name}`);
-      }
+      addLogLine(`${statsA.name} esquive l'attaque de ${statsB.name}`);
+    }
+
+    if (statsA.hp <= 0) {
+      addLogLine(`🏆 Victoire de ${statsB.name}`);
+      return;
     }
 
     tour++;
+    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 secondes
+    nextTurn(); // Prochain tour
   }
 
-  const winner = statsA.hp > 0 ? statsA.name : statsB.name;
-  log.push(`🏆 Victoire de ${winner}`);
-  log.push(`${statsA.name} PV restants : ${Math.max(0, statsA.hp)} | ${statsB.name} PV restants : ${statsB.hp}`);
-
-  const container = document.getElementById("pvp-tab");
-  const logBox = document.createElement("pre");
-  logBox.className = "pvp-log";
-  logBox.style.background = "#111";
-  logBox.style.color = "#0f0";
-  logBox.style.padding = "10px";
-
-  logBox.innerHTML = log.join("<br>");
-  container.appendChild(logBox);
+  nextTurn();
 }
+
 
 function sendPvpStatsToDiscord() {
   const wins = player.pvpStats?.wins || 0;
