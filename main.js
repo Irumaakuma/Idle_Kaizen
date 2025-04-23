@@ -196,6 +196,16 @@ async function simulateCombat(playerA, playerB) {
     if (statsB.hp <= 0) {
       await addLogLine(`🏆 Victoire de ${statsA.name}`, "#00b0ff");
       await addLogLine(`${statsA.name} PV restants : ${Math.max(0, statsA.hp).toFixed(2)} | ${statsB.name} PV restants : 0`, "#00b0ff");
+
+      // 🔔 Envoi webhook Discord
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `⚔️ **${statsA.name}** a vaincu **${statsB.name}** en PvP !`
+        })
+      });
+
       return;
     }
 
@@ -217,8 +227,17 @@ async function simulateCombat(playerA, playerB) {
       if (statsA.name === currentUsername) {
         player.dead = true;
         savePlayerData(currentUserId);
-        await new Promise(resolve => setTimeout(resolve, 500)); // un mini délai
-        triggerRebirth(); // 🔁 Lancer la renaissance
+
+        fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `⚔️ **${statsB.name}** a vaincu **${statsA.name}** en PvP !`
+          })
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        triggerRebirth();
         showToast("☠️ Tu es mort au combat... Une nouvelle vie commence !");
       }
 
