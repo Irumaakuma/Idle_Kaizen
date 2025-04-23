@@ -413,7 +413,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-// 🔁 Exposer les fonctions globalement
+
 window.updateUI = updateUI;
 window.switchTab = switchTab;
 window.triggerRebirth = triggerRebirth;
