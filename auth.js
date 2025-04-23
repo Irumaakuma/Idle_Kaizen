@@ -12,43 +12,39 @@ function loginWithDiscord() {
 }
 
 function checkLogin() {
-  // 1. Si on vient de se faire rediriger depuis Discord
+  // Si déjà stocké en localStorage → utilise ça
+  const storedId = localStorage.getItem("discord_id");
+  const storedUsername = localStorage.getItem("username");
+
+  if (storedId && storedUsername) {
+    currentUserId = storedId;
+    currentUsername = storedUsername;
+    window.currentUsername = storedUsername;
+
+    document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
+    loadPlayerData(currentUserId);
+
+    // Nettoyer l’URL s'il y avait #logged
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return;
+  }
+
+  // Sinon, vérifier si on vient d'être redirigé depuis Discord
   const urlParams = new URLSearchParams(window.location.search);
   const discordId = urlParams.get("discord_id");
   const username = urlParams.get("username");
 
   if (discordId) {
-    // Enregistrer dans localStorage
     localStorage.setItem("discord_id", discordId);
     localStorage.setItem("username", username || "Joueur");
-
-    // Rediriger vers une URL propre (sans query params)
     window.location.href = "#logged";
     return;
   }
 
-  // 2. Si on a été redirigé vers #logged
-  if (window.location.hash === "#logged") {
-    const storedId = localStorage.getItem("discord_id");
-    const storedUsername = localStorage.getItem("username");
-
-    if (storedId && storedUsername) {
-      currentUserId = storedId;
-      currentUsername = storedUsername;
-      window.currentUsername = storedUsername;
-
-      document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
-      loadPlayerData(currentUserId);
-
-      // Nettoyer l’URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      return;
-    }
-  }
-
-  // 3. Sinon, afficher le bouton de connexion
+  // Aucun login détecté
   document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
 }
+
 
 
 
