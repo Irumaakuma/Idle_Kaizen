@@ -154,7 +154,7 @@ async function simulateCombat(playerA, playerB) {
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
   const statsA = {
-    name: "Toi",
+    name: currentUsername || "Toi",
     hp: 10 + getStat(playerA, "vitalite") * 3,
     force: getStat(playerA, "force"),
     vigueur: getStat(playerA, "vigueur"),
