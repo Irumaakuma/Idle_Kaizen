@@ -195,7 +195,7 @@ async function simulateCombat(playerA, playerB) {
     }
 
     // B attaque A
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
     if (Math.random() * 100 >= statsA.agilite - statsB.dexterite) {
       const dmg = Math.max(1, statsB.force - statsA.vigueur);
       statsA.hp -= dmg;
