@@ -111,7 +111,7 @@ function autoSaveLoop() {
 function hardReset() {
   if (confirm("🧨 Es-tu sûr de vouloir supprimer **définitivement** ta sauvegarde ?")) {
     if (currentUserId) {
-      fetch(`http://localhost:3000/delete/${currentUserId}`, {
+      fetch(`https://kaizen-backend-fkod.onrender.com/delete/${currentUserId}`, {
         method: "DELETE"
       }).then(res => {
         if (res.ok) {
@@ -128,12 +128,12 @@ function hardReset() {
 }
 
 async function loadAllPlayers() {
-  const res = await fetch("http://localhost:3000/players");
+  const res = await fetch("https://kaizen-backend-fkod.onrender.com/players");
   return await res.json();
 }
 
 async function loadOpponentData(opponentId) {
-  const res = await fetch(`http://localhost:3000/load/${opponentId}`);
+  const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${opponentId}`);
   return await res.json();
 }
 
@@ -251,7 +251,7 @@ function sendPvpStatsToDiscord() {
   const losses = player.pvpStats?.losses || 0;
   const username = window.currentUsername || "Joueur inconnu";
 
-  fetch("http://localhost:3000/pvp-stats", {
+  fetch("https://kaizen-backend-fkod.onrender.com/pvp-stats", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, wins, losses })
@@ -261,7 +261,7 @@ function sendPvpStatsToDiscord() {
 }
 
 function sendPvpLeaderboardToDiscord() {
-  fetch("http://localhost:3000/pvp-leaderboard", { method: "POST" }).then(() => {
+  fetch("https://kaizen-backend-fkod.onrender.com/pvp-leaderboard", { method: "POST" }).then(() => {
     showToast("📡 Classement PvP envoyé sur Discord !");
   });
 }

@@ -2,7 +2,7 @@ let currentUserId = null;
 let currentUsername = null;
 
 const clientId = "1363336518181195817";
-const redirectUri = "http://localhost:3000/auth/discord/callback";
+const redirectUri = "https://kaizen-backend-fkod.onrender.com/auth/discord/callback";
 const webhookURL = "https://discord.com/api/webhooks/1363338362244567141/...";
 
 // Auth vers backend
@@ -71,7 +71,7 @@ function getSaveData() {
 }
 
 function savePlayerData(userId) {
-  fetch(`http://localhost:3000/save/${userId}`, {
+  fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(getSaveData())
@@ -84,7 +84,7 @@ function savePlayerData(userId) {
 }
 
 async function loadPlayerData(userId) {
-  const res = await fetch(`http://localhost:3000/load/${userId}`);
+  const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`);
   const data = await res.json();
 
   if (data) {
