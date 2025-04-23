@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kaizen Idle</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 🧭 MENU LATÉRAL -->
+  <div id="sidebar">
+    <div class="sidebar-block">
+      <div class="age-line">
+        Âge <span id="display-age">14</span> ans, jour <span id="day-count">0</span>
+      </div>
+      <div class="lifespan" style="color: gray;">
+        Durée de vie estimée : 70 ans
+      </div>
+    </div>
+
+    <div class="sidebar-block">
+      <div>💰 <strong><span id="money-display">0</span> berries</strong></div>
+      <div style="color: #00e676;">+<span id="income-display">0</span> / jour</div>
+      <div style="color: #ff5252;">-<span id="expense-display">0</span> / jour</div>
+    </div>
+
+    <div class="sidebar-block">
+      <strong>Job actuel :</strong><br />
+      <div id="current-job-display">Aucun</div>
+      <div class="progress-bar-bg">
+        <div id="current-job-bar" class="progress-bar-fill" style="background: #42a5f5; width: 0%;"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-block">
+      <strong>Compétence active :</strong><br />
+      <div id="current-skill-display">Aucune</div>
+      <div class="progress-bar-bg">
+        <div id="current-skill-bar" class="progress-bar-fill" style="background: gold; width: 0%;"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-block">
+      ❤️ Bonheur : <strong id="happiness-display">1.0</strong>
+    </div>
+
+    <div class="sidebar-block">
+      🏳️ Faction : <strong id="faction-display">Civil</strong>
+    </div>
+
+    <div class="sidebar-block">
+      ⚖️ Alignement :
+      <div class="progress-bar-bg">
+        <div id="alignment-bar" class="progress-bar-fill" style="background: linear-gradient(to right, #00bcd4, #ff1744); width: 50%;"></div>
+      </div>
+    </div>
+
+    <!-- ✅ Bloc pour choix faction -->
+    <div id="faction-choice" class="sidebar-block"></div>
+  </div>
+
+  <!-- 🏝️ CONTENU PRINCIPAL -->
+  <div id="game-container">
+    <h1>Kaizen Idle</h1>
+
+    <!-- 🔘 Onglets -->
+    <div id="tabs">
+      <button onclick="switchTab('jobs')">Jobs</button>
+      <button onclick="switchTab('skills')">Compétences</button>
+      <button onclick="switchTab('shop')">Boutique</button>
+      <button onclick="switchTab('pvp')">PvP</button>
+      <button onclick="switchTab('settings')">Paramètres</button>
+    </div>
+
+    <!-- 🧩 Contenu des onglets -->
+    <div id="jobs-tab" class="tab-content"></div>
+
+    <div id="skills-tab" class="tab-content" style="display: none;">
+      <h2>Compétences</h2>
+      <div id="rpg-stats"></div>
+    </div>
+
+    <div id="shop-tab" class="tab-content" style="display: none;">
+      <h2>Boutique</h2>
+      <div id="shop-items"></div>
+    </div>
+
+    <div id="pvp-tab" class="tab-content" style="display: none;"></div>
+
+    <div id="settings-tab" class="tab-content" style="display: none;">
+      <h2>Paramètres</h2>
+
+      <div id="login-area">
+        <button onclick="loginWithDiscord()">Se connecter avec Discord</button>
+      </div>
+
+      <div id="save-controls" style="margin-top: 10px;">
+        <button onclick="forceSave()">💾 Sauvegarder maintenant</button>
+        <span id="last-save" style="margin-left: 10px;">💾 Aucune sauvegarde effectuée</span>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button onclick="hardReset()" class="danger">🧨 Réinitialiser le joueur</button>
+      </div>
+
+      <!-- 🏆 Classement PvP -->
+      <div style="margin-top: 30px;">
+        <h3>🏆 Classement PvP</h3>
+        <button onclick="sendPvpStatsToDiscord()">📊 Afficher mon classement sur Discord</button>
+        <button onclick="sendPvpLeaderboardToDiscord()">📢 Afficher le Top 10 PvP sur Discord</button>
+      </div>
+
+      <!-- 🔁 Section Rebirth -->
+      <div id="rebirth-section" style="display: none; margin-top: 20px;">
+        <h3>☠️ Tu es mort !</h3>
+        <div id="rebirth-bonuses-list" style="margin-bottom: 10px;"></div>
+        <button onclick="triggerRebirth()" class="danger">🔁 Recommencer avec bonus</button>
+      </div>
+
+      <!-- 📊 Multiplicateurs -->
+      <div id="multipliers-summary" style="margin-top: 30px;">
+        <h3>📊 Multiplicateurs par compétence</h3>
+        <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr>
+              <th>Compétence</th>
+              <th>Niveau</th>
+              <th>Rebirth</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="multipliers-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Toast -->
+  <div id="toast-message" class="toast"></div>
+
+  <!-- 📦 SCRIPTS -->
+  <script src="utils.js"></script>
+  <script src="task.js"></script>
+  <script src="player.js"></script>
+  <script src="faction.js"></script>
+  <script src="jobs.js"></script>
+  <script src="quests.js"></script>
+  <script src="auth.js"></script>
+  <script src="shop.js"></script>
+  <script src="ui.js"></script>
+  <script src="gameLoop.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
