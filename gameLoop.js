@@ -47,6 +47,12 @@ function checkJobEvolution() {
     
     const job = jobs.find(j => j.id === player.currentJobId);
     if (job) {
+      // 🔄 Alignement automatique (avant choix faction)
+      if (!player.faction) {
+        if (job.group === "pirate") gainAlignment(-0.5);
+        else if (job.group === "marine") gainAlignment(+0.5);
+      }
+    
       gainBerries(Math.round(applySpeed(job.getIncome())));
       job.gainXp();
       checkJobEvolution();

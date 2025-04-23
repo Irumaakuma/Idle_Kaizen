@@ -1,3 +1,17 @@
+function getAlignmentColor(score) {
+  const clamped = Math.max(-100, Math.min(100, score));
+  const percent = (clamped + 100) / 200;
+
+  const red = Math.round(255 * (1 - percent));
+  const green = 80; // tu peux ajuster pour teinte chaude/équilibrée
+  const blue = Math.round(255 * percent);
+
+  return `rgb(${red}, ${green}, ${blue})`;
+}
+
+
+
+
 function renderSidebar() {
   document.getElementById("money-display").textContent = formatNumber(player.berries);
 
@@ -45,7 +59,7 @@ function renderSidebar() {
   const alignBar = document.getElementById("alignment-bar");
 
   alignBar.style.width = percent + "%";
-  alignBar.style.background = align < 0 ? "#ff5252" : align > 0 ? "#00e5ff" : "#999";
+  alignBar.style.background = getAlignmentColor(align);
 
   if (player.hasLogPose && player.dailyBonus?.duration) {
     const existing = document.getElementById("log-pose-box");
@@ -67,7 +81,6 @@ function renderSidebar() {
     `;
     document.getElementById("sidebar").appendChild(logBox);
   }
-  
 
   renderFactionChoice();
   unlockSkillsProgressively();
