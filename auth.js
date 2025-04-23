@@ -16,25 +16,36 @@ function checkLogin() {
   const discordId = urlParams.get("discord_id");
   const username = urlParams.get("username");
 
-  if (!discordId) {
-    document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
-    return;
+  // Nouvelle logique : si URL est "#logged", on récupère les données du localStorage
+  if (window.location.hash === "#logged") {
+    const storedId = localStorage.getItem("discord_id");
+    const storedUsername = localStorage.getItem("username");
+
+    if (storedId && storedUsername) {
+      currentUserId = storedId;
+      currentUsername = storedUsername;
+      window.currentUsername = storedUsername;
+
+      document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${storedUsername}`;
+      loadPlayerData(currentUserId);
+
+      // Optionnel : nettoyer l'URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return;
+    }
   }
 
-  currentUserId = discordId;
+  // Ancienne méthode temporaire (utilisée juste après redirection)
+  if (discordId) {
+    localStorage.setItem("discord_id", discordId);
+    localStorage.setItem("username", username || "Joueur");
 
-  if (username) {
-    currentUsername = decodeURIComponent(username);
-    window.currentUsername = currentUsername; // 👈 exposé globalement
-    document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
+    window.location.href = "#logged"; // on redirige avec hash propre
   } else {
-    currentUsername = "Joueur inconnu";
-    window.currentUsername = currentUsername;
-    document.getElementById("login-area").innerHTML = `✅ Connecté via Discord`;
+    document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
   }
-
-  loadPlayerData(currentUserId);
 }
+
 
 
 
