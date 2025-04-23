@@ -12,7 +12,9 @@ function loginWithDiscord() {
 }
 
 function checkLogin() {
-  // Si déjà stocké en localStorage → utilise ça
+  console.log("⚡ checkLogin() appelé automatiquement");
+
+  // 1. Vérifie si déjà stocké localement
   const storedId = localStorage.getItem("discord_id");
   const storedUsername = localStorage.getItem("username");
 
@@ -21,15 +23,17 @@ function checkLogin() {
     currentUsername = storedUsername;
     window.currentUsername = storedUsername;
 
+    console.log("✅ currentUserId récupéré depuis localStorage :", currentUserId);
+
     document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
     loadPlayerData(currentUserId);
 
-    // Nettoyer l’URL s'il y avait #logged
+    // Nettoyer l’URL s’il y avait un hash
     window.history.replaceState({}, document.title, window.location.pathname);
     return;
   }
 
-  // Sinon, vérifier si on vient d'être redirigé depuis Discord
+  // 2. Si on vient d’être redirigé depuis Discord avec des query params
   const urlParams = new URLSearchParams(window.location.search);
   const discordId = urlParams.get("discord_id");
   const username = urlParams.get("username");
@@ -37,13 +41,16 @@ function checkLogin() {
   if (discordId) {
     localStorage.setItem("discord_id", discordId);
     localStorage.setItem("username", username || "Joueur");
-    window.location.href = "#logged";
+    console.log("💾 Données enregistrées dans localStorage depuis URL");
+    window.location.href = "#logged"; // redirige vers URL propre
     return;
   }
 
-  // Aucun login détecté
+  // 3. Sinon, afficher le bouton
+  console.log("🔐 Aucune session détectée — affichage du bouton login");
   document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
 }
+
 
 
 
