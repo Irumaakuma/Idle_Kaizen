@@ -5,6 +5,24 @@ function applySpeed(value) {
   return value * happiness;
 }
 
+function sendPvpNotification(killer, victim) {
+  if (!webhookURL || !killer || !victim) return;
+
+  fetch(webhookURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: `⚔️ **${killer}** a vaincu **${victim}** en PvP !`
+    })
+  })
+  .then(res => {
+    if (!res.ok) console.error("❌ Erreur Webhook Discord :", res.status);
+    else console.log("✅ Webhook envoyé :", killer, "->", victim);
+  })
+  .catch(err => console.error("❌ Échec webhook :", err));
+}
+
+
 function updateUI() {
   renderStats();
   renderJobs();
@@ -198,16 +216,7 @@ async function simulateCombat(playerA, playerB) {
     if (statsB.hp <= 0) {
       await addLogLine(`🏆 Victoire de ${statsA.name}`, "#00b0ff");
       await addLogLine(`${statsA.name} PV restants : ${Math.max(0, statsA.hp).toFixed(2)} | ${statsB.name} PV restants : 0`, "#00b0ff");
-
-      // 🔔 Envoi webhook Discord
-      fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `⚔️ **${statsA.name}** a vaincu **${statsB.name}** en PvP !`
-        })
-      });
-
+      sendPvpNotification(statsA.name, statsB.name);
       return;
     }
 
@@ -225,19 +234,11 @@ async function simulateCombat(playerA, playerB) {
       await addLogLine(`🏆 Victoire de ${statsB.name}`, "#00b0ff");
       await addLogLine(`${statsA.name} PV restants : 0 | ${statsB.name} PV restants : ${Math.max(0, statsB.hp).toFixed(2)}`, "#00b0ff");
 
-      // 💀 Joueur a perdu → mort + sauvegarde + rebirth
+      sendPvpNotification(statsB.name, statsA.name);
+
       if (statsA.name === currentUsername) {
         player.dead = true;
         savePlayerData(currentUserId);
-
-        fetch(webhookURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            content: `⚔️ **${statsB.name}** a vaincu **${statsA.name}** en PvP !`
-          })
-        });
-
         await new Promise(resolve => setTimeout(resolve, 500));
         triggerRebirth();
         showToast("☠️ Tu es mort au combat... Une nouvelle vie commence !");
