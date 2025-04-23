@@ -73,7 +73,10 @@ function getSaveData() {
 function savePlayerData(userId) {
   fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": userId // 👈 OBLIGATOIRE pour que le serveur accepte
+    },
     body: JSON.stringify(getSaveData())
   }).then(() => {
     const now = new Date();
@@ -83,8 +86,12 @@ function savePlayerData(userId) {
   });
 }
 
+
 async function loadPlayerData(userId) {
-  const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`);
+  const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
+    headers: { "Authorization": userId }
+  });
+
   const data = await res.json();
 
   if (data) {
