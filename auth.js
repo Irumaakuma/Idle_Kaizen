@@ -158,15 +158,19 @@ function forceSave() {
     const now = new Date();
     const time = now.toLocaleTimeString();
 
-    fetch(webhookURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        content: `💾 Sauvegarde manuelle effectuée à ${time} pour <@${currentUserId}>`
-      })
-    });
+    try {
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content: `💾 Sauvegarde manuelle effectuée à ${time} pour <@${currentUserId}>`
+        })
+      });
+    } catch (err) {
+      console.warn("⚠️ Webhook Discord échoué :", err);
+    }
 
     showToast("💾 Sauvegarde manuelle envoyée !");
   } else {
