@@ -161,3 +161,7 @@ function forceSave() {
     showToast("❌ Connecte-toi avec Discord d'abord !");
   }
 }
+
+window.onload = () => {
+  checkLogin();
+};
