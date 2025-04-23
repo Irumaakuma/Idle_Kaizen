@@ -162,6 +162,5 @@ function forceSave() {
   }
 }
 
-window.onload = () => {
-  checkLogin();
-};
+checkLogin();
+
