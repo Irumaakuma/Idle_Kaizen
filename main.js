@@ -138,18 +138,21 @@ async function challengePlayer(id) {
 }
 
 async function simulateCombat(playerA, playerB) {
-  const log = [`⚔️ Combat entre ${playerA.name || "Toi"} et ${playerB.name || "Adversaire"}`];
+  const log = [`⚔️ Combat entre ${currentUsername || "Toi"} et ${playerB.discordUsername?.split("#")[0] || "Adversaire"}`];
   const container = document.getElementById("pvp-tab");
   const logBox = document.createElement("pre");
   logBox.className = "pvp-log";
   logBox.style.background = "#111";
   logBox.style.color = "#0f0";
   logBox.style.padding = "10px";
+  logBox.style.maxHeight = "300px";
+  logBox.style.overflowY = "auto";
   container.appendChild(logBox);
 
   function addLogLine(line) {
     log.push(line);
     logBox.innerHTML = log.join("<br>");
+    logBox.scrollTop = logBox.scrollHeight;
   }
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
@@ -174,9 +177,10 @@ async function simulateCombat(playerA, playerB) {
   let tour = 1;
   async function nextTurn() {
     addLogLine(`--- Tour ${tour} ---`);
-    addLogLine(`${statsA.name} PV: ${statsA.hp} | ${statsB.name} PV: ${statsB.hp}`);
+    addLogLine(`${statsA.name} PV: ${statsA.hp.toFixed(2)} | ${statsB.name} PV: ${statsB.hp.toFixed(2)}`);
 
     // A attaque B
+    await new Promise(resolve => setTimeout(resolve, 10000));
     if (Math.random() * 100 >= statsB.agilite - statsA.dexterite) {
       const dmg = Math.max(1, statsA.force - statsB.vigueur);
       statsB.hp -= dmg;
@@ -190,9 +194,8 @@ async function simulateCombat(playerA, playerB) {
       return;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 secondes
-
     // B attaque A
+    await new Promise(resolve => setTimeout(resolve, 10000));
     if (Math.random() * 100 >= statsA.agilite - statsB.dexterite) {
       const dmg = Math.max(1, statsB.force - statsA.vigueur);
       statsA.hp -= dmg;
@@ -207,12 +210,12 @@ async function simulateCombat(playerA, playerB) {
     }
 
     tour++;
-    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 secondes
-    nextTurn(); // Prochain tour
+    await nextTurn(); // 👈 appel récursif avec await
   }
 
-  nextTurn();
+  await nextTurn(); // ✅ important pour ralentir proprement
 }
+
 
 
 function sendPvpStatsToDiscord() {
