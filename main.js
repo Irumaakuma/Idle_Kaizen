@@ -138,26 +138,28 @@ async function challengePlayer(id) {
 }
 
 async function simulateCombat(playerA, playerB) {
-  const log = [`⚔️ Combat entre ${currentUsername || "Toi"} et ${playerB.discordUsername?.split("#")[0] || "Adversaire"}`];
   const container = document.getElementById("pvp-tab");
   const logBox = document.createElement("pre");
   logBox.className = "pvp-log";
   logBox.style.background = "#111";
-  logBox.style.color = "#0f0";
+  logBox.style.color = "#fff";
   logBox.style.padding = "10px";
   logBox.style.maxHeight = "300px";
   logBox.style.overflowY = "auto";
   container.appendChild(logBox);
 
-  function addLogLine(line) {
-    log.push(line);
-    logBox.innerHTML = log.join("<br>");
+  const nameA = currentUsername || "Toi";
+  const nameB = playerB.discordUsername?.split("#")[0] || "Adversaire";
+
+  function addLogLine(line, color = "#ccc") {
+    const lineHTML = `<span style="color: ${color};">${line}</span>`;
+    logBox.innerHTML += lineHTML + "<br>";
     logBox.scrollTop = logBox.scrollHeight;
   }
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
   const statsA = {
-    name: currentUsername || "Toi",
+    name: nameA,
     hp: 10 + getStat(playerA, "vitalite") * 3,
     force: getStat(playerA, "force"),
     vigueur: getStat(playerA, "vigueur"),
@@ -166,7 +168,7 @@ async function simulateCombat(playerA, playerB) {
   };
 
   const statsB = {
-    name: playerB.discordUsername?.split("#")[0] || "Adversaire",
+    name: nameB,
     hp: 10 + getStat(playerB, "vitalite") * 3,
     force: getStat(playerB, "force"),
     vigueur: getStat(playerB, "vigueur"),
@@ -175,45 +177,49 @@ async function simulateCombat(playerA, playerB) {
   };
 
   let tour = 1;
-  async function nextTurn() {
-    addLogLine(`--- Tour ${tour} ---`);
-    addLogLine(`${statsA.name} PV: ${statsA.hp.toFixed(2)} | ${statsB.name} PV: ${statsB.hp.toFixed(2)}`);
+  await addLogLine(`⚔️ Combat entre ${statsA.name} et ${statsB.name}`, "#ffffff");
 
-    // A attaque B
-    await new Promise(resolve => setTimeout(resolve, 10000));
+  async function nextTurn() {
+    addLogLine(`--- Tour ${tour} ---`, "#888");
+    addLogLine(`${statsA.name} PV: ${statsA.hp.toFixed(2)} | ${statsB.name} PV: ${statsB.hp.toFixed(2)}`, "#888");
+
+    // Attaque du joueur
+    await new Promise(r => setTimeout(r, 10000));
     if (Math.random() * 100 >= statsB.agilite - statsA.dexterite) {
       const dmg = Math.max(1, statsA.force - statsB.vigueur);
       statsB.hp -= dmg;
-      addLogLine(`${statsA.name} inflige ${dmg.toFixed(1)} dégâts à ${statsB.name}`);
+      await addLogLine(`✅ ${statsA.name} inflige ${dmg.toFixed(1)} dégâts à ${statsB.name}`, "limegreen");
     } else {
-      addLogLine(`${statsB.name} esquive l'attaque de ${statsA.name}`);
+      await addLogLine(`✅ ${statsB.name} esquive l'attaque de ${statsA.name}`, "limegreen");
     }
 
     if (statsB.hp <= 0) {
-      addLogLine(`🏆 Victoire de ${statsA.name}`);
+      await addLogLine(`🏆 Victoire de ${statsA.name}`, "#00b0ff");
+      await addLogLine(`${statsA.name} PV restants : ${Math.max(0, statsA.hp).toFixed(2)} | ${statsB.name} PV restants : 0`, "#00b0ff");
       return;
     }
 
-    // B attaque A
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Attaque de l’ennemi
+    await new Promise(r => setTimeout(r, 10000));
     if (Math.random() * 100 >= statsA.agilite - statsB.dexterite) {
       const dmg = Math.max(1, statsB.force - statsA.vigueur);
       statsA.hp -= dmg;
-      addLogLine(`${statsB.name} inflige ${dmg.toFixed(1)} dégâts à ${statsA.name}`);
+      await addLogLine(`❌ ${statsB.name} inflige ${dmg.toFixed(1)} dégâts à ${statsA.name}`, "tomato");
     } else {
-      addLogLine(`${statsA.name} esquive l'attaque de ${statsB.name}`);
+      await addLogLine(`❌ ${statsA.name} esquive l'attaque de ${statsB.name}`, "tomato");
     }
 
     if (statsA.hp <= 0) {
-      addLogLine(`🏆 Victoire de ${statsB.name}`);
+      await addLogLine(`🏆 Victoire de ${statsB.name}`, "#00b0ff");
+      await addLogLine(`${statsA.name} PV restants : 0 | ${statsB.name} PV restants : ${Math.max(0, statsB.hp).toFixed(2)}`, "#00b0ff");
       return;
     }
 
     tour++;
-    await nextTurn(); // 👈 appel récursif avec await
+    await nextTurn();
   }
 
-  await nextTurn(); // ✅ important pour ralentir proprement
+  await nextTurn();
 }
 
 
