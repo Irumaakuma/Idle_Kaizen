@@ -375,8 +375,7 @@ function applyFactionBonusesToQuest(baseReward, baseDuration) {
 
 setInterval(autoSaveLoop, 10000);
 
-window.onload = () => {
-  checkLogin();
+window.addEventListener("DOMContentLoaded", () => {
   updateUI();
 
   setTimeout(() => {
@@ -384,8 +383,7 @@ window.onload = () => {
       setInterval(updateGameLoop, 1000 / updateSpeed);
     }
   }, 100);
-};
-
+});
 
 window.switchTab = switchTab;
 window.triggerRebirth = triggerRebirth;
