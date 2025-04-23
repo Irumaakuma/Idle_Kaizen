@@ -162,5 +162,6 @@ function forceSave() {
   }
 }
 
-checkLogin();
+window.addEventListener("DOMContentLoaded", checkLogin);
+
 
