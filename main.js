@@ -1,3 +1,5 @@
+const webhookURL = "https://discord.com/api/webhooks/1363338362244567141/lM6-jUxgdgyw1eBrhgH70BbQNnco4If-AExWOijdVmcTgPI49CIrll09yZqQgleAVQoA";
+
 function applySpeed(value) {
   const happiness = player.dead ? 1 : parseFloat(player.happiness || 1) || 1;
   return value * happiness;
