@@ -20,38 +20,25 @@ function togglePvpButton() {
   const replacement = document.createElement("button");
   replacement.textContent = "PvP";
   replacement.className = pvpButton.className;
-  replacement.style.opacity = 0.5;
+  replacement.style.opacity = 1;
   replacement.style.cursor = "pointer";
-
-  if (!currentUserId) {
-    replacement.onclick = () => showToast("❌ Connecte-toi avec Discord pour accéder au PvP.");
-  } else if (player.faction === "Civil") {
-    replacement.onclick = () => showToast("❌ Tu dois rejoindre une faction pour accéder au PvP.");
-  } else {
-    replacement.style.opacity = 1;
-    replacement.onclick = () => switchTab("pvp");
-  }
+  replacement.onclick = () => switchTab("pvp");
 
   pvpButton.replaceWith(replacement);
 }
 
 
+
 function switchTab(tabId) {
   console.log("🔎 currentUserId:", currentUserId);
-  console.log("🔎 faction:", player.faction); // ← pour débogage visuel
+  console.log("🔎 faction:", player.faction);
 
   if (tabId === "pvp") {
     if (!currentUserId) {
       showToast("❌ Connecte-toi avec Discord pour accéder au PvP.");
       return;
     }
-    // ❌ SUPPRIMER cette condition ↓
-    // if (!player.faction || player.faction.toLowerCase() === "civil") {
-    //   showToast("❌ Tu dois rejoindre une faction pour accéder au PvP.");
-    //   return;
-    // }
   }
-  
 
   document.querySelectorAll(".tab-content").forEach(div => div.style.display = "none");
   document.getElementById(`${tabId}-tab`).style.display = "block";
@@ -74,32 +61,25 @@ function renderPvpTab() {
     return;
   }
 
-  if (player.faction === "Civil") {
-    // ❌ SUPPRIMER ce bloc ↓
-    // container.innerHTML = `<h2>PvP</h2><p style='color: #ff5252;'>❌ Vous devez rejoindre une faction pour accéder au PvP.</p>`;
-    // return;
-  }
-  
-
   container.innerHTML = "<h2>Joueurs disponibles</h2><div id='player-list'></div>";
 
   loadAllPlayers().then(players => {
     const list = document.getElementById("player-list");
     players
-    players
-      .filter(p => p.username && !p.username.includes("???")) // on garde tout sauf les anonymes  
+      .filter(p => p.username && !p.username.includes("???"))  // ❗ On garde même les civils
       .forEach(player => {
         const pseudo = player.username.split("#")[0];
         const block = document.createElement("div");
         block.className = "pvp-entry";
         block.innerHTML = `
           <strong>${pseudo}</strong> - Faction : ${player.faction} - Force : ${player.level}
-          <button onclick=\"challengePlayer('${player.id}')\">Défier</button>
+          <button onclick="challengePlayer('${player.id}')">Défier</button>
         `;
         list.appendChild(block);
       });
   });
 }
+
 
 function selectSkill(skillId) {
   player.currentSkillId = player.currentSkillId === skillId ? null : skillId;
@@ -154,20 +134,10 @@ async function loadOpponentData(opponentId) {
 
 async function challengePlayer(id) {
   const opponent = await loadOpponentData(id);
-  if (opponent.faction === "Civil") {
-    // ❌ SUPPRIMER ce bloc ↓
-    // showToast("❌ Tu ne peux pas défier un joueur Civil.");
-    // return;
-  }
-  
   simulateCombat(player, opponent);
 }
 
 function simulateCombat(playerA, playerB) {
-// if (!["marine", "pirate"].includes(player.faction)) {
-//   showToast("❌ Tu dois appartenir à une faction pour participer au PvP !");
-//   return;
-// }
 
 
   const getStat = (p, stat) => p.skills?.[stat]?.level || 0;
