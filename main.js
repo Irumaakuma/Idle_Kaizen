@@ -184,7 +184,7 @@ async function simulateCombat(playerA, playerB) {
     addLogLine(`${statsA.name} PV: ${statsA.hp.toFixed(2)} | ${statsB.name} PV: ${statsB.hp.toFixed(2)}`, "#888");
 
     // Attaque du joueur
-    await new Promise(r => setTimeout(r, 10000));
+    await new Promise(r => setTimeout(r, 3000));
     if (Math.random() * 100 >= statsB.agilite - statsA.dexterite) {
       const dmg = Math.max(1, statsA.force - statsB.vigueur);
       statsB.hp -= dmg;
@@ -200,7 +200,7 @@ async function simulateCombat(playerA, playerB) {
     }
 
     // Attaque de l’ennemi
-    await new Promise(r => setTimeout(r, 10000));
+    await new Promise(r => setTimeout(r, 3000));
     if (Math.random() * 100 >= statsA.agilite - statsB.dexterite) {
       const dmg = Math.max(1, statsB.force - statsA.vigueur);
       statsA.hp -= dmg;
