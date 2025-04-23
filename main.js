@@ -212,6 +212,16 @@ async function simulateCombat(playerA, playerB) {
     if (statsA.hp <= 0) {
       await addLogLine(`🏆 Victoire de ${statsB.name}`, "#00b0ff");
       await addLogLine(`${statsA.name} PV restants : 0 | ${statsB.name} PV restants : ${Math.max(0, statsB.hp).toFixed(2)}`, "#00b0ff");
+
+      // 💀 Joueur a perdu → mort + sauvegarde + rebirth
+      if (statsA.name === currentUsername) {
+        player.dead = true;
+        savePlayerData(currentUserId);
+        await new Promise(resolve => setTimeout(resolve, 500)); // un mini délai
+        triggerRebirth(); // 🔁 Lancer la renaissance
+        showToast("☠️ Tu es mort au combat... Une nouvelle vie commence !");
+      }
+
       return;
     }
 
@@ -219,21 +229,8 @@ async function simulateCombat(playerA, playerB) {
     await nextTurn();
   }
 
-
   await nextTurn();
 }
-
-window.playerFictif = {
-  discordUsername: "Dummy#0001",
-  skills: {
-    force: { level: 100 },
-    vigueur: { level: 1 },
-    vitalite: { level: 1 },
-    agilite: { level: 1 },
-    dexterite: { level: 1 }
-  }
-};
-
 
 
 function sendPvpStatsToDiscord() {
