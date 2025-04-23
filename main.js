@@ -413,6 +413,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
+// 🔁 Exposer les fonctions globalement
+window.updateUI = updateUI;
 window.switchTab = switchTab;
 window.triggerRebirth = triggerRebirth;
 window.challengePlayer = challengePlayer;
@@ -420,4 +422,4 @@ window.renderPvpTab = renderPvpTab;
 window.simulateCombat = simulateCombat;
 window.unlockSkillsProgressively = unlockSkillsProgressively;
 window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
-window.updateUI = updateUI;
+window.sendPvpNotification = sendPvpNotification;
