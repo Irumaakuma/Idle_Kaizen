@@ -93,7 +93,7 @@ function checkJobEvolution() {
   }
   
   function triggerRebirth() {
-    player.rebirth++;
+    player.rebirth = (player.rebirth || 0) + 1;
     const savedBonuses = { ...player.rebirthBonuses };
   
     Object.assign(player, {
@@ -103,23 +103,50 @@ function checkJobEvolution() {
       job: "Civil",
       currentJobId: null,
       currentSkillId: null,
-      jobs: {},
-      skills: { ...window.defaultSkills },
       day: 1,
       age: 0,
       dead: false,
       maxAge: 30,
-      rebirthBonuses: savedBonuses
+      rebirthBonuses: savedBonuses,
+      questsCompleted: [],
+      hasLogPose: false
     });
   
-    for (let id in player.skills) {
-      player.skills[id].unlocked = true;
+    // 🔄 Réinitialiser les jobs
+    player.jobs = {};
+    jobs.forEach(j => {
+      j.level = 1;
+      j.xp = 0;
+    });
+  
+    // 🔄 Réinitialiser les skills avec ceux par défaut
+    player.skills = {};
+    for (let id in window.defaultSkills) {
+      const base = window.defaultSkills[id];
+      player.skills[id] = new Skill({
+        id: base.id,
+        name: base.name,
+        baseXpGain: base.baseXpGain,
+        baseEffect: base.baseEffect,
+        group: base.group,
+        unlocked: true, // 🟢 tous débloqués après rebirth
+        getBonusDamage: base.getBonusDamage,
+        getBonusDodge: base.getBonusDodge,
+        getTripleHitChance: base.getTripleHitChance,
+        getIgnoreDefense: base.getIgnoreDefense,
+        getEventChanceBoost: base.getEventChanceBoost,
+        getEventDurationBoost: base.getEventDurationBoost,
+        getFactionRevenueBonus: base.getFactionRevenueBonus,
+        getFactionSpeedBonus: base.getFactionSpeedBonus,
+        maxLevel: base.maxLevel
+      });
     }
   
     document.getElementById("rebirth-section").style.display = "none";
     showToast("🔁 Nouvelle vie lancée ! Tes bonus sont actifs.");
     updateUI();
   }
+  
 
   // 🎲 Système complet d’événements aléatoires
 const dailyEvents = {
