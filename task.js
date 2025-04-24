@@ -63,7 +63,7 @@ class Skill {
   }
 
   getXpGain() {
-    return this.baseXpGain * 2;
+    return this.baseXpGain * 20;
   }
 
   gainXp() {
