@@ -93,7 +93,7 @@ class Skill {
 window.Task = Task;
 window.Skill = Skill;
 
-// === Nouvelle structure de compétences ===
+
 window.defaultSkills = {
   // 🧱 Fondamentales
   agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
