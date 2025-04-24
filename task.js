@@ -1,5 +1,5 @@
 class Task {
-  constructor(id, name, baseXpPerTick = 1000) {
+  constructor(id, name, baseXpPerTick = 3) {
     this.id = id;
     this.name = name;
     this.level = 0;
@@ -29,7 +29,7 @@ class Task {
 }
 
 class Skill {
-  constructor({ id, name, baseXpGain = 1000, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
+  constructor({ id, name, baseXpGain = 3, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
     this.id = id;
     this.name = name;
     this.level = 1;
@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(40 * (this.level + 1) * Math.pow(1.02, this.level));
+    return Math.round(75 * (this.level + 1) * Math.pow(1.02, this.level));
   }
 
   getProgress() {
@@ -95,13 +95,13 @@ window.Skill = Skill;
 
 // === Nouvelle structure de compétences ===
 window.defaultSkills = {
-  force:       new Skill({ id: "force", name: "Force", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 20, baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 50, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
+  force:       new Skill({ id: "force", name: "Force", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
   
 
   // 🗡️ Combat
