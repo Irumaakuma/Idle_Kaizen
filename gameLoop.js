@@ -129,7 +129,9 @@ function checkJobEvolution() {
       maxAge: 30,
       rebirthBonuses: savedBonuses,
       questsCompleted: [],
-      hasLogPose: false
+      hasLogPose: false,
+      queuedIncome: 0,
+      queuedSkillXp: 0
     });
   
     // 🔄 Réinitialiser les jobs
@@ -139,7 +141,7 @@ function checkJobEvolution() {
       j.xp = 0;
     });
   
-    // 🔄 Réinitialiser les skills avec ceux par défaut
+    // 🔄 Réinitialiser les skills
     player.skills = {};
     for (let id in window.defaultSkills) {
       const base = window.defaultSkills[id];
@@ -149,7 +151,7 @@ function checkJobEvolution() {
         baseXpGain: base.baseXpGain,
         baseEffect: base.baseEffect,
         group: base.group,
-        unlocked: true, // 🟢 tous débloqués après rebirth
+        unlocked: true,
         getBonusDamage: base.getBonusDamage,
         getBonusDodge: base.getBonusDodge,
         getTripleHitChance: base.getTripleHitChance,
@@ -162,7 +164,21 @@ function checkJobEvolution() {
       });
     }
   
+    // ✅ Réactiver les onglets
+    document.querySelectorAll("#tabs button").forEach(btn => {
+      btn.disabled = false;
+      btn.style.opacity = 1;
+      btn.style.pointerEvents = "auto";
+    });
+  
+    // ✅ Masquer la section Rebirth
     document.getElementById("rebirth-section").style.display = "none";
+  
+    // ✅ Restaurer la navigation normale
+    if (typeof originalSwitchTab === "function") {
+      window.switchTab = originalSwitchTab;
+    }
+  
     showToast("🔁 Nouvelle vie lancée ! Tes bonus sont actifs.");
     updateUI();
   }

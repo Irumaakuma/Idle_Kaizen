@@ -29,6 +29,14 @@ function updateUI() {
   renderShop();
   updateTimeUI();
   togglePvpButton();
+
+
+  if (player.dead) {
+    lockDeathMode();
+  }
+  
+
+
 }
 
 function togglePvpButton() {
@@ -48,14 +56,18 @@ function togglePvpButton() {
 
 
 function switchTab(tabId) {
+  // 🔒 Empêche de naviguer si le joueur est mort (sauf "settings")
+  if (player.dead && tabId !== "settings") {
+    showToast("☠️ Tu es mort ! Tu dois renaître.");
+    return;
+  }
+
   console.log("🔎 currentUserId:", currentUserId);
   console.log("🔎 faction:", player.faction);
 
-  if (tabId === "pvp") {
-    if (!currentUserId) {
-      showToast("❌ Connecte-toi avec Discord pour accéder au PvP.");
-      return;
-    }
+  if (tabId === "pvp" && !currentUserId) {
+    showToast("❌ Connecte-toi avec Discord pour accéder au PvP.");
+    return;
   }
 
   document.querySelectorAll(".tab-content").forEach(div => div.style.display = "none");
@@ -69,6 +81,9 @@ function switchTab(tabId) {
   if (tabId === "shop") renderShop();
   if (tabId === "pvp") renderPvpTab();
 }
+
+// Sauvegarde la version originale de switchTab pour pouvoir la restaurer après la mort
+const originalSwitchTab = switchTab;
 
 
 function renderPvpTab() {
