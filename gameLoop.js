@@ -32,23 +32,26 @@ function checkJobEvolution() {
   function updateGameLoop() {
     if (player.dead) return;
   
-    // ⏳ Avancer le temps in-game
-    if (player.currentJobId || player.currentSkillId) {
+    // ✅ Vérifie si le joueur est actif (job OU compétence débloquée active)
+    const jobActif = !!player.currentJobId;
+    const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
+  
+    if (jobActif || skillActif) {
       player.day += applySpeed(1);
     }
   
-    // 🔁 Job actif (revenu + XP + accumulation)
-    if (player.currentJobId) {
+    // 🔁 Exécution du job
+    if (jobActif) {
       const job = jobs.find(j => j.id === player.currentJobId);
       if (job) {
-        job.run(); // utilise queuedIncome + XP
-        checkJobEvolution(); // ✅ déplace ici pour éviter doublon
+        job.run();
+        checkJobEvolution();
       }
     }
   
-    // ✨ Compétence active avec XP fractionnaire
-    const skill = player.skills[player.currentSkillId];
-    if (skill && skill.unlocked) {
+    // ✨ XP compétence avec accumulation
+    if (skillActif) {
+      const skill = player.skills[player.currentSkillId];
       const gain = applySpeed(skill.getXpGain?.() || 0);
       player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
   
@@ -64,7 +67,7 @@ function checkJobEvolution() {
       }
     }
   
-    // 📆 Événement du jour
+    // 📆 Effet d'événement actif
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -73,8 +76,8 @@ function checkJobEvolution() {
       }
     }
   
-    // 📈 Mise à jour de l'âge et du maxAge
-    if (skill || player.currentJobId) {
+    // 📈 Mise à jour de l'âge et de la mort
+    if (jobActif || skillActif) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
   
@@ -107,6 +110,7 @@ function checkJobEvolution() {
   
     updateUI();
   }
+  
   
   
   function triggerRebirth() {
