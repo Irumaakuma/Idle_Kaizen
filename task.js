@@ -12,7 +12,9 @@ class Task {
   }
 
   gainXp() {
-    this.xp += this.baseXpPerTick;
+    const multiplier = window.taskXpBoostMultiplier || 2; // Définir un multiplicateur global
+    this.xp += this.baseXpPerTick * multiplier;
+  
     if (this.xp >= this.getMaxXp()) {
       this.level++;
       this.xp = 0;
