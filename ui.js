@@ -6,9 +6,7 @@ function renderSidebar() {
   const revenuReel = Math.round(revenuExact);
 
   // ✅ Affichage combiné : vrai gain + valeur technique
-  document.getElementById("income-display").innerHTML = `${revenuReel} <span style="color:gray;font-size:0.8em;">(${revenuExact.toFixed(2)})</span>`;
-  document.getElementById("expense-display").textContent = "0";
-
+  document.getElementById("income-display").innerHTML = `<span style="color:#00e676;">${revenuReel} (${revenuExact.toFixed(2)})</span>`;
   // Job actuel
   if (job) {
     document.getElementById("current-job-display").textContent = `${job.name} (Nv. ${job.level})`;
