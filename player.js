@@ -16,15 +16,20 @@ const player = {
   day: 1,
   age: 0,
   maxAge: 30,     // ⚠️ Limite de vie fixée à 30 ans
-  dead: false     // ⚠️ Nouveau flag pour gérer la mort
+  dead: false     // ⚠️ Flag pour gérer la mort
 };
 
-// Gagner des berries
+// ✅ Réserve pour revenus fractionnaires (ex: 0.2/jour accumulés)
+player.queuedIncome = 0;
+player.queuedSkillXp = 0;
+
+
+// 💰 Gagner des berries
 function gainBerries(amount) {
   player.berries += amount;
 }
 
-// Gagner de l’XP de niveau général
+// ⭐ Gagner de l’XP de niveau général
 function gainXP(amount) {
   player.xp += amount;
   if (player.xp >= player.level * 100) {

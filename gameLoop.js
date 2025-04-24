@@ -34,8 +34,22 @@ function checkJobEvolution() {
   
     const skill = player.skills[player.currentSkillId];
     if (skill && skill.unlocked) {
-      skill.gainXp();
+      const gain = applySpeed(skill.getXpGain?.() || 0);
+    player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
+
+    if (player.queuedSkillXp >= 1) {
+      const wholeXp = Math.floor(player.queuedSkillXp);
+      skill.xp += wholeXp;
+    player.queuedSkillXp -= wholeXp;
+
+    while (skill.xp >= skill.getMaxXp()) {
+      skill.xp -= skill.getMaxXp();
+      skill.level++;
     }
+  }
+}
+
+
 
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;

@@ -67,9 +67,25 @@ class Job {
   }
 
   run() {
-    gainBerries(Math.round(applySpeed(this.getIncome())));
+    const income = applySpeed(this.getIncome());
+  
+    // Initialiser la réserve si elle n'existe pas encore
+    player.queuedIncome = player.queuedIncome || 0;
+  
+    // Ajouter le revenu à la réserve
+    player.queuedIncome += income;
+  
+    // Lorsque 1 ou plus est atteint, convertir en berries
+    if (player.queuedIncome >= 1) {
+      const whole = Math.floor(player.queuedIncome);
+      gainBerries(whole);
+      player.queuedIncome -= whole;
+    }
+  
+    // Gagner de l'XP normalement
     this.gainXp();
   }
+  
 
   loadSavedData() {
     if (player.jobs[this.id]) {

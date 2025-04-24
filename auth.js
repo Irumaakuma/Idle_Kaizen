@@ -87,6 +87,9 @@ function getSaveData() {
     faction: player.faction,
     discordUsername: currentUsername || "???",
     alignmentScore: player.alignmentScore || 0, // ✅ AJOUTÉ ICI
+    queuedIncome: player.queuedIncome || 0,
+    queuedSkillXp: player.queuedSkillXp || 0,
+
   };
 }
 
@@ -126,7 +129,14 @@ async function loadPlayerData(userId) {
       player.alignmentScore = data.alignmentScore;
     }
     
-
+    if (data.queuedIncome !== undefined) {
+      player.queuedIncome = data.queuedIncome;
+    }
+    
+    if (data.queuedSkillXp !== undefined) {
+      player.queuedSkillXp = data.queuedSkillXp;
+    }
+    
     const rebuiltSkills = {};
     for (let id in data.skills) {
       const s = data.skills[id];
