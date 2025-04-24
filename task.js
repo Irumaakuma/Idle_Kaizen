@@ -12,9 +12,7 @@ class Task {
   }
 
   gainXp() {
-    const multiplier = window.taskXpBoostMultiplier || 2; // Définir un multiplicateur global
-    this.xp += this.baseXpPerTick * multiplier;
-  
+    this.xp += this.baseXpPerTick;
     if (this.xp >= this.getMaxXp()) {
       this.level++;
       this.xp = 0;
@@ -98,13 +96,13 @@ window.Skill = Skill;
 // === Nouvelle structure de compétences ===
 window.defaultSkills = {
   // 🧱 Fondamentales
-  force:       new Skill({ id: "force", name: "Force", baseEffect: 0.01, group: "fondamentale" }),
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+
 
   // 🗡️ Combat
   karate_homme_poisson: new Skill({ id: "karate_homme_poisson", name: "Karaté HP", group: "combat", unlocked: false, getBonusDamage: lvl => lvl * 0.02 }),
