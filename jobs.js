@@ -221,7 +221,7 @@ function renderJobs() {
       if (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel) return;
 
       job.loadSavedData();
-      const revenu = job.getIncome(); // ne pas arrondir
+      const revenu = applySpeed(job.getIncome());
       const ticksParJour = Math.floor(86400 / job.interval);
       const revenuParJour = revenu * ticksParJour;
       const isCurrent = player.currentJobId === job.id;
