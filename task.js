@@ -1,5 +1,5 @@
 class Task {
-  constructor(id, name, baseXpPerTick = 100) {
+  constructor(id, name, baseXpPerTick = 1000) {
     this.id = id;
     this.name = name;
     this.level = 0;
@@ -29,7 +29,7 @@ class Task {
 }
 
 class Skill {
-  constructor({ id, name, baseXpGain = 1, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
+  constructor({ id, name, baseXpGain = 1000, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
     this.id = id;
     this.name = name;
     this.level = 1;
