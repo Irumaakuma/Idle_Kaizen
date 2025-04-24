@@ -32,10 +32,10 @@ function checkJobEvolution() {
   function updateGameLoop() {
     if (player.dead) return;
   
-    // ✅ Vérifie si le joueur est actif (job OU compétence débloquée active)
     const jobActif = !!player.currentJobId;
     const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
   
+    // ✅ Avancer le temps SEULEMENT si job ou compétence active
     if (jobActif || skillActif) {
       player.day += applySpeed(1);
     }
@@ -49,7 +49,7 @@ function checkJobEvolution() {
       }
     }
   
-    // ✨ XP compétence avec accumulation
+    // ✨ XP compétence
     if (skillActif) {
       const skill = player.skills[player.currentSkillId];
       const gain = applySpeed(skill.getXpGain?.() || 0);
@@ -67,7 +67,7 @@ function checkJobEvolution() {
       }
     }
   
-    // 📆 Effet d'événement actif
+    // 📆 Mise à jour événements
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -76,7 +76,7 @@ function checkJobEvolution() {
       }
     }
   
-    // 📈 Mise à jour de l'âge et de la mort
+    // 📈 Mise à jour âge + vérification de mort
     if (jobActif || skillActif) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
@@ -87,7 +87,6 @@ function checkJobEvolution() {
       if (player.age >= player.maxAge && !player.dead) {
         player.dead = true;
   
-        // 🧬 Calcul des bonus de renaissance
         let bonusHTML = "<ul style='margin-left: 10px;'>";
         for (let id in player.skills) {
           const skill = player.skills[id];
@@ -103,13 +102,13 @@ function checkJobEvolution() {
   
         document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
         document.getElementById("rebirth-section").style.display = "block";
-  
         showToast("☠️ Tu es mort de vieillesse à " + Math.floor(player.age) + " ans...");
       }
     }
   
     updateUI();
   }
+  
   
   
   
