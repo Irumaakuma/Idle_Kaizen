@@ -221,9 +221,7 @@ function renderJobs() {
       if (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel) return;
 
       job.loadSavedData();
-      const revenu = applySpeed(job.getIncome());
-      const ticksParJour = Math.floor(86400_000 / job.interval);
-      const revenuParJour = revenu * ticksParJour;
+      const revenuParJour = applySpeed(job.getIncome());
       const isCurrent = player.currentJobId === job.id;
       
       groupContent += `
@@ -234,7 +232,7 @@ function renderJobs() {
           </div>
           <button onclick="selectJob('${job.id}')">${isCurrent ? 'Annuler' : 'Choisir'}</button>
         </div>
-      `;      
+      `;
     });
 
     if (groupContent !== "") {
