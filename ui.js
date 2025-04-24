@@ -3,11 +3,12 @@ function renderSidebar() {
 
   const job = jobs.find(j => j.id === player.currentJobId);
   const revenuExact = job ? applySpeed(job.getIncome()) : 0;
-  const revenuReel = Math.round(revenuExact);
 
-  // ✅ Affichage combiné : vrai gain + valeur technique
-  document.getElementById("income-display").innerHTML = `<span style="color:#00e676;">${revenuReel} (${revenuExact.toFixed(2)})</span>`;
-  // Job actuel
+  // ✅ Affichage direct du revenu exact (par jour in-game)
+  document.getElementById("income-display").textContent = revenuExact.toFixed(2);
+  document.getElementById("expense-display").textContent = "0";
+
+  // Job actif
   if (job) {
     document.getElementById("current-job-display").textContent = `${job.name} (Nv. ${job.level})`;
     document.getElementById("current-job-bar").style.width = `${job.getProgress()}%`;
@@ -46,7 +47,7 @@ function renderSidebar() {
   document.getElementById("faction-display").textContent =
     `${faction}${rank && faction !== "Civil" ? " (" + rank + ")" : ""}`;
 
-  // Log Pose bonus
+  // Log Pose (si actif)
   if (player.hasLogPose && player.dailyBonus?.duration) {
     const existing = document.getElementById("log-pose-box");
     if (existing) existing.remove();
