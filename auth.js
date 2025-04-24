@@ -84,10 +84,12 @@ function getSaveData() {
     skills: cleanSkills,
     jobs: { ...player.jobs },
     questsCompleted: player.questsCompleted,
-    faction: player.faction, // 👈 Ne surtout pas oublier ça !
+    faction: player.faction,
     discordUsername: currentUsername || "???",
+    alignmentScore: player.alignmentScore || 0, // ✅ AJOUTÉ ICI
   };
 }
+
 
 
 function savePlayerData(userId) {
@@ -120,6 +122,10 @@ async function loadPlayerData(userId) {
     if (data.faction) {
       player.faction = data.faction; // ✅ restauration manuelle si besoin
     }
+    if (data.alignmentScore !== undefined) {
+      player.alignmentScore = data.alignmentScore;
+    }
+    
 
     const rebuiltSkills = {};
     for (let id in data.skills) {

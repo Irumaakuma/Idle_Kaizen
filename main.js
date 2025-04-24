@@ -238,8 +238,7 @@ async function simulateCombat(playerA, playerB) {
         player.dead = true;
         savePlayerData(currentUserId);
         await new Promise(resolve => setTimeout(resolve, 500));
-        triggerRebirth();
-        showToast("☠️ Tu es mort au combat... Une nouvelle vie commence !");
+        lockDeathMode(); // ✅ au lieu de triggerRebirth direct
       }
 
       return;
@@ -251,6 +250,33 @@ async function simulateCombat(playerA, playerB) {
 
   await nextTurn();
 }
+
+function lockDeathMode() {
+  showToast("☠️ Tu es mort... Rebirth obligatoire.");
+
+  // Forcer l’onglet paramètres
+  switchTab("settings");
+
+  // Cacher tous les autres onglets
+  document.querySelectorAll(".tab-content").forEach(tab => {
+    if (!tab.id.includes("settings-tab")) {
+      tab.style.display = "none";
+    }
+  });
+
+  // Désactiver tous les boutons sauf Paramètres
+  document.querySelectorAll("#tabs button").forEach(btn => {
+    if (!btn.textContent.includes("Paramètres")) {
+      btn.disabled = true;
+      btn.style.opacity = 0.3;
+      btn.style.pointerEvents = "none";
+    }
+  });
+
+  // 🔒 Empêcher tout changement d’onglet
+  window.switchTab = () => showToast("❌ Tu es mort... Tu dois renaître !");
+}
+
 
 
 function sendPvpStatsToDiscord() {
