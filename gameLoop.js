@@ -54,18 +54,18 @@ if (skillActif) {
   const skill = player.skills[player.currentSkillId];
 
   // Tu peux ajuster ce multiplicateur pour encore plus de vitesse
-  const gain = applySpeed(skill.getXpGain?.() || 0) * 10;
+  const SKILL_XP_MULTIPLIER = 50; // 💥 tu peux mettre 10, 20, 100 selon ce que tu veux
+  const gain = applySpeed(skill.getXpGain?.() || 0) * SKILL_XP_MULTIPLIER;
   player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
 
-  // Ajouter tout le gain immédiatement (même fractionnaire)
   skill.xp += player.queuedSkillXp;
   player.queuedSkillXp = 0;
-
-  // Monter de niveau si besoin
+  
   while (skill.xp >= skill.getMaxXp()) {
     skill.xp -= skill.getMaxXp();
     skill.level++;
   }
+  
 
   // Mettre à jour la barre manuellement pour qu'elle bouge à chaque tick
   const bar = document.getElementById("current-skill-bar");
