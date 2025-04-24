@@ -5,7 +5,7 @@ function renderSidebar() {
   const job = jobs.find(j => j.id === player.currentJobId);
   const revenuParSeconde = job ? (job.getIncome() * 1000) / job.interval : 0;
 
-  document.getElementById("income-display").textContent = revenuParSeconde.toFixed(2);
+  document.getElementById("income-display").textContent = formatCurrency(totalIncome);
   document.getElementById("expense-display").textContent = "0";
 
   if (job) {
