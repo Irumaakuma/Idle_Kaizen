@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(80 * (this.level + 1) * Math.pow(1.04, this.level));
+    return Math.round(100 * (this.level + 1) * Math.pow(1.04, this.level));
   }
 
   getProgress() {
@@ -63,7 +63,7 @@ class Skill {
   }
 
   getXpGain() {
-    return this.baseXpGain * 1.5;
+    return this.baseXpGain;
   }
 
   gainXp() {
@@ -96,13 +96,13 @@ window.Skill = Skill;
 // === Nouvelle structure de compétences ===
 window.defaultSkills = {
   // 🧱 Fondamentales
-  force:       new Skill({ id: "force", name: "Force", baseEffect: 0.05, group: "fondamentale" }),
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseEffect: 0.05, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseEffect: 0.05, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseEffect: 0.05, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseEffect: 0.05, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseEffect: 0.05, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseEffect: 0.05, group: "fondamentale" }),
+  force:       new Skill({ id: "force", name: "Force", baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseEffect: 0.01, group: "fondamentale" }),
 
   // 🗡️ Combat
   karate_homme_poisson: new Skill({ id: "karate_homme_poisson", name: "Karaté HP", group: "combat", unlocked: false, getBonusDamage: lvl => lvl * 0.02 }),
