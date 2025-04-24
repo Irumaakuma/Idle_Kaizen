@@ -4,10 +4,10 @@ function renderSidebar() {
 
   const job = jobs.find(j => j.id === player.currentJobId);
   const jobRevenu = job ? applySpeed(job.getIncome()) : 0;
-  
-  document.getElementById("income-display").textContent = formatCurrency(jobRevenu);
+  document.getElementById("income-display").textContent = jobRevenu.toFixed(2); // affichage exact du revenu/jour
   document.getElementById("expense-display").textContent = "0";
 
+  // Job actuel
   if (job) {
     document.getElementById("current-job-display").textContent = `${job.name} (Nv. ${job.level})`;
     document.getElementById("current-job-bar").style.width = `${job.getProgress()}%`;
@@ -16,6 +16,7 @@ function renderSidebar() {
     document.getElementById("current-job-bar").style.width = "0%";
   }
 
+  // Compétence active
   const skill = player.skills[player.currentSkillId];
   if (skill) {
     document.getElementById("current-skill-display").textContent = `${skill.name} (Nv. ${skill.level})`;
@@ -25,29 +26,34 @@ function renderSidebar() {
     document.getElementById("current-skill-bar").style.width = "0%";
   }
 
+  // Bonheur ou mort
   const bonheur = player.dead ? "💀 Mort" : player.happiness.toFixed(2);
   document.getElementById("happiness-display").textContent = bonheur;
 
+  // Espérance de vie
   const lifespan = document.querySelector(".lifespan");
   if (lifespan) {
     lifespan.textContent = `Durée de vie estimée : ${Math.floor(player.maxAge)} ans`;
   }
 
+  // Faction + rang
   const faction = player.faction === "marine"
     ? "⚓ Marine"
     : player.faction === "pirate"
     ? "🏴‍☠️ Pirate"
     : "Civil";
   const rank = getFactionRank?.() || "";
-  document.getElementById("faction-display").textContent = `${faction}${rank && faction !== "Civil" ? " (" + rank + ")" : ""}`;
+  document.getElementById("faction-display").textContent =
+    `${faction}${rank && faction !== "Civil" ? " (" + rank + ")" : ""}`;
 
+  // Log Pose bonus
   if (player.hasLogPose && player.dailyBonus?.duration) {
     const existing = document.getElementById("log-pose-box");
     if (existing) existing.remove();
-  
+
     const bonusChance = player.skills.cartographie?.getEventChanceBoost?.(player.skills.cartographie.level || 0) || 0;
     const percent = (15 + bonusChance * 100).toFixed(2);
-  
+
     const logBox = document.createElement("div");
     logBox.id = "log-pose-box";
     logBox.style.color = "#00e5ff";
@@ -65,6 +71,7 @@ function renderSidebar() {
   renderFactionChoice();
   unlockSkillsProgressively();
 }
+
 
 function updateTimeUI() {
   const totalDays = Math.floor(player.day);
