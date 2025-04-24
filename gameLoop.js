@@ -32,25 +32,37 @@ function checkJobEvolution() {
   function updateGameLoop() {
     if (player.dead) return;
   
+    // ⏳ Avancer le temps in-game
+    player.day += applySpeed(1);
+  
+    // 🔁 Job actif (revenu + XP + accumulation)
+    if (player.currentJobId) {
+      const job = jobs.find(j => j.id === player.currentJobId);
+      if (job) {
+        job.run(); // utilise queuedIncome + XP
+        checkJobEvolution(); // ✅ déplace ici pour éviter doublon
+      }
+    }
+  
+    // ✨ Compétence active avec XP fractionnaire
     const skill = player.skills[player.currentSkillId];
     if (skill && skill.unlocked) {
       const gain = applySpeed(skill.getXpGain?.() || 0);
-    player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
-
-    if (player.queuedSkillXp >= 1) {
-      const wholeXp = Math.floor(player.queuedSkillXp);
-      skill.xp += wholeXp;
-    player.queuedSkillXp -= wholeXp;
-
-    while (skill.xp >= skill.getMaxXp()) {
-      skill.xp -= skill.getMaxXp();
-      skill.level++;
+      player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
+  
+      if (player.queuedSkillXp >= 1) {
+        const wholeXp = Math.floor(player.queuedSkillXp);
+        skill.xp += wholeXp;
+        player.queuedSkillXp -= wholeXp;
+  
+        while (skill.xp >= skill.getMaxXp()) {
+          skill.xp -= skill.getMaxXp();
+          skill.level++;
+        }
+      }
     }
-  }
-}
-
-
-
+  
+    // 📆 Événement du jour
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -58,22 +70,9 @@ function checkJobEvolution() {
         player.dailyBonus = null;
       }
     }
-    
-    const job = jobs.find(j => j.id === player.currentJobId);
-    if (job) {
-      // 🔄 Alignement automatique (avant choix faction)
-      if (!player.faction) {
-        if (job.group === "pirate") gainAlignment(-0.5);
-        else if (job.group === "marine") gainAlignment(+0.5);
-      }
-    
-      gainBerries(Math.round(applySpeed(job.getIncome())));
-      job.gainXp();
-      checkJobEvolution();
-    }
   
-    if (skill || job) {
-      player.day += applySpeed(1);
+    // 📈 Mise à jour de l'âge et du maxAge
+    if (skill || player.currentJobId) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
   
@@ -83,6 +82,7 @@ function checkJobEvolution() {
       if (player.age >= player.maxAge && !player.dead) {
         player.dead = true;
   
+        // 🧬 Calcul des bonus de renaissance
         let bonusHTML = "<ul style='margin-left: 10px;'>";
         for (let id in player.skills) {
           const skill = player.skills[id];
@@ -105,6 +105,7 @@ function checkJobEvolution() {
   
     updateUI();
   }
+  
   
   function triggerRebirth() {
     player.rebirth = (player.rebirth || 0) + 1;
