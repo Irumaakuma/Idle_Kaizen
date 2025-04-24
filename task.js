@@ -1,5 +1,5 @@
 class Task {
-  constructor(id, name, baseXpPerTick = 1) {
+  constructor(id, name, baseXpPerTick = 100) {
     this.id = id;
     this.name = name;
     this.level = 0;
@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(80 * (this.level + 1) * Math.pow(1.02, this.level));
+    return Math.round(40 * (this.level + 1) * Math.pow(1.02, this.level));
   }
 
   getProgress() {
@@ -93,16 +93,16 @@ class Skill {
 window.Task = Task;
 window.Skill = Skill;
 
-
+// === Nouvelle structure de compétences ===
 window.defaultSkills = {
   // 🧱 Fondamentales
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
-
+  force:       new Skill({ id: "force", name: "Force", baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseEffect: 0.01, group: "fondamentale" }),
 
   // 🗡️ Combat
   karate_homme_poisson: new Skill({ id: "karate_homme_poisson", name: "Karaté HP", group: "combat", unlocked: false, getBonusDamage: lvl => lvl * 0.02 }),
