@@ -33,8 +33,25 @@ function updateUI() {
 
 
   if (player.dead) {
-    lockDeathMode();
+    // 🔁 Afficher le bouton Rebirth si mort
+    const rebirthBox = document.getElementById("rebirth-section");
+    if (rebirthBox) {
+      rebirthBox.style.display = "block";
+    }
+  
+    // 🔒 Désactiver tous les onglets sauf Paramètres
+    document.querySelectorAll("#tabs button").forEach(btn => {
+      if (!btn.textContent.includes("Paramètres")) {
+        btn.disabled = true;
+        btn.style.opacity = 0.4;
+        btn.style.pointerEvents = "none";
+      }
+    });
+  
+    // 🚫 Forcer l'utilisateur à rester dans l'onglet Paramètres
+    switchTab("settings");
   }
+  
   
 
 
@@ -270,17 +287,8 @@ async function simulateCombat(playerA, playerB) {
 function lockDeathMode() {
   showToast("☠️ Tu es mort... Rebirth obligatoire.");
 
-  // Forcer l’onglet paramètres
   switchTab("settings");
 
-  // Cacher tous les autres onglets
-  document.querySelectorAll(".tab-content").forEach(tab => {
-    if (!tab.id.includes("settings-tab")) {
-      tab.style.display = "none";
-    }
-  });
-
-  // Désactiver tous les boutons sauf Paramètres
   document.querySelectorAll("#tabs button").forEach(btn => {
     if (!btn.textContent.includes("Paramètres")) {
       btn.disabled = true;
@@ -289,11 +297,11 @@ function lockDeathMode() {
     }
   });
 
-  // ✅ Afficher la section de renaissance
   const rebirthBox = document.getElementById("rebirth-section");
-  if (rebirthBox) rebirthBox.style.display = "block";
+  if (rebirthBox) {
+    rebirthBox.style.display = "block";
+  }
 
-  // 🔒 Empêche de switcher d’onglet
   window.switchTab = () => showToast("❌ Tu es mort... Tu dois renaître !");
 }
 
