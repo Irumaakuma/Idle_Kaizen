@@ -29,7 +29,7 @@ class Task {
 }
 
 class Skill {
-  constructor({ id, name, baseXpGain = 5, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
+  constructor({ id, name, baseXpGain = 8, baseEffect = 0.05, group = "autre", unlocked = true, getBonusDamage, getBonusDodge, getTripleHitChance, getIgnoreDefense, maxLevel }) {
     this.id = id;
     this.name = name;
     this.level = 1;
@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(100 * (this.level + 1) * Math.pow(1.04, this.level));
+    return Math.round(80 * (this.level + 1) * Math.pow(1.04, this.level));
   }
 
   getProgress() {
