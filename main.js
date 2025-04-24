@@ -32,14 +32,12 @@ function updateUI() {
   document.getElementById("rebirth-section").style.display = "block";
 
 
+  const rebirthBox = document.getElementById("rebirth-section");
+
   if (player.dead) {
-    // 🔁 Afficher le bouton Rebirth si mort
-    const rebirthBox = document.getElementById("rebirth-section");
-    if (rebirthBox) {
-      rebirthBox.style.display = "block";
-    }
+    if (rebirthBox) rebirthBox.style.display = "block";
   
-    // 🔒 Désactiver tous les onglets sauf Paramètres
+    // 🔒 Lock interface
     document.querySelectorAll("#tabs button").forEach(btn => {
       if (!btn.textContent.includes("Paramètres")) {
         btn.disabled = true;
@@ -48,8 +46,9 @@ function updateUI() {
       }
     });
   
-    // 🚫 Forcer l'utilisateur à rester dans l'onglet Paramètres
     switchTab("settings");
+  } else {
+    if (rebirthBox) rebirthBox.style.display = "none";
   }
   
   
