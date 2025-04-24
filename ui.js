@@ -106,21 +106,21 @@ function renderMultiplierTable() {
   body.innerHTML = "";
 
   const fondamentales = Object.values(player.skills).filter(s => s.group === "fondamentale");
+
   fondamentales.forEach(skill => {
-    const levelMult = (skill.level * skill.baseEffect).toFixed(2);
-    const rebirthBonus = (player.rebirthBonuses?.[skill.id] || 0).toFixed(2);
-    const total = (1 + parseFloat(levelMult) + parseFloat(rebirthBonus)).toFixed(2);
+    const level = skill.level;
+    const projectedBonus = (Math.floor(level / 10) * 0.1).toFixed(1);
 
     body.innerHTML += `
       <tr>
         <td>${skill.name}</td>
-        <td>+${levelMult}</td>
-        <td>+${rebirthBonus}</td>
-        <td>x${total}</td>
+        <td>${level}</td>
+        <td>+${projectedBonus}</td>
       </tr>
     `;
   });
 }
+
 
 function renderStats() {
   const container = document.getElementById("rpg-stats");
@@ -140,7 +140,7 @@ function renderStats() {
     vigueur: "🌾 Augmente les revenus des jobs agricoles",
     agilite: "🏴‍☠️ Augmente les revenus des jobs pirates",
     intelligence: "⚓ Augmente les revenus des jobs marines",
-    vitalite: "❤️ Augmente les points de vie (à venir)",
+    vitalite: "❤️ Augmente les points de vie",
     endurance: "🧬 Augmente la durée de vie maximale",
     dexterite: "⚡ Accélère la vitesse d'exécution de toutes les tâches",
   
