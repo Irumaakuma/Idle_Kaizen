@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(100 * (this.level + 1) * Math.pow(1.05, this.level));
+    return Math.round(50 * (this.level + 1) * Math.pow(1.05, this.level));
   }
 
   getProgress() {
@@ -95,13 +95,13 @@ window.Skill = Skill;
 
 // === Nouvelle structure de compétences ===
 window.defaultSkills = {
-  force:       new Skill({ id: "force", name: "Force", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 2, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
+  force:       new Skill({ id: "force", name: "Force", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
   
 
   // 🗡️ Combat
