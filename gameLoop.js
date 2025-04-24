@@ -33,7 +33,9 @@ function checkJobEvolution() {
     if (player.dead) return;
   
     // ⏳ Avancer le temps in-game
-    player.day += applySpeed(1);
+    if (player.currentJobId || player.currentSkillId) {
+      player.day += applySpeed(1);
+    }
   
     // 🔁 Job actif (revenu + XP + accumulation)
     if (player.currentJobId) {
