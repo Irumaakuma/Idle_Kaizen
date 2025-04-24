@@ -1,10 +1,12 @@
-
 function renderSidebar() {
   document.getElementById("money-display").textContent = formatNumber(player.berries);
 
   const job = jobs.find(j => j.id === player.currentJobId);
-  const jobRevenu = job ? applySpeed(job.getIncome()) : 0;
-  document.getElementById("income-display").textContent = jobRevenu.toFixed(2); // affichage exact du revenu/jour
+  const revenuExact = job ? applySpeed(job.getIncome()) : 0;
+  const revenuReel = Math.round(revenuExact);
+
+  // ✅ Affichage combiné : vrai gain + valeur technique
+  document.getElementById("income-display").innerHTML = `${revenuReel} <span style="color:gray;font-size:0.8em;">(${revenuExact.toFixed(2)})</span>`;
   document.getElementById("expense-display").textContent = "0";
 
   // Job actuel
@@ -71,6 +73,7 @@ function renderSidebar() {
   renderFactionChoice();
   unlockSkillsProgressively();
 }
+
 
 
 function updateTimeUI() {
