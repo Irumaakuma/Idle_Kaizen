@@ -6,7 +6,6 @@ function renderSidebar() {
 
   // ✅ Affichage direct du revenu exact (par jour in-game)
   document.getElementById("income-display").textContent = revenuExact.toFixed(2);
-  document.getElementById("expense-display").textContent = "0";
 
   // Job actif
   if (job) {
