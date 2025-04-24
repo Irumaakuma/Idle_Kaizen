@@ -29,7 +29,7 @@ function updateUI() {
   renderShop();
   updateTimeUI();
   togglePvpButton();
-  document.getElementById("rebirth-section").style.display = "block";
+  
 
 
   const rebirthBox = document.getElementById("rebirth-section");
