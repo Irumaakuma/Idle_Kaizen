@@ -46,7 +46,7 @@ class Skill {
   }
 
   getMaxXp() {
-    return Math.round(100 * (this.level + 1) * Math.pow(1.1, this.level));
+    return Math.round(100 * (this.level + 1) * Math.pow(1.04, this.level));
   }
 
   getProgress() {
