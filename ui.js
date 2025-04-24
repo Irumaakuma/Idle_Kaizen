@@ -73,7 +73,24 @@ function updateTimeUI() {
 
   document.getElementById("display-age").textContent = 14 + age;
   document.getElementById("day-count").textContent = dayOfYear;
+
+  const logposeBox = document.getElementById("logpose-sidebar");
+  if (!logposeBox) return;
+
+  if (player.hasLogPose && player.dailyBonus) {
+    const bonus = player.dailyBonus;
+    const typeText = bonus.type === "positive" ? "✨ Bonus" : "⚠️ Malus";
+    const effect = bonus.effect || "Effet inconnu";
+    logposeBox.innerHTML = `${typeText}<br>${effect}<br><em>${bonus.duration} ticks restants</em>`;
+    logposeBox.style.display = "block";
+  } else if (player.hasLogPose) {
+    logposeBox.innerHTML = `🔍 Aucune perturbation active.`;
+    logposeBox.style.display = "block";
+  } else {
+    logposeBox.style.display = "none";
+  }
 }
+
 
 function renderMultiplierTable() {
   const body = document.getElementById("multipliers-table-body");
