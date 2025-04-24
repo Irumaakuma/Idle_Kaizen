@@ -29,6 +29,7 @@ function updateUI() {
   renderShop();
   updateTimeUI();
   togglePvpButton();
+  document.getElementById("rebirth-section").style.display = "block";
 
 
   if (player.dead) {
@@ -288,7 +289,11 @@ function lockDeathMode() {
     }
   });
 
-  // 🔒 Empêcher tout changement d’onglet
+  // ✅ Afficher la section de renaissance
+  const rebirthBox = document.getElementById("rebirth-section");
+  if (rebirthBox) rebirthBox.style.display = "block";
+
+  // 🔒 Empêche de switcher d’onglet
   window.switchTab = () => showToast("❌ Tu es mort... Tu dois renaître !");
 }
 
