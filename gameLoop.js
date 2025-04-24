@@ -126,6 +126,24 @@ if (skillActif) {
   
   function triggerRebirth() {
     player.rebirth = (player.rebirth || 0) + 1;
+  
+    // ✅ Appliquer les bonus même sans mort de vieillesse
+    if (!player.rebirthBonuses) player.rebirthBonuses = {};
+    let bonusHTML = "<ul style='margin-left: 10px;'>";
+    for (let id in player.skills) {
+      const skill = player.skills[id];
+      if (skill.group === "fondamentale") {
+        const bonus = Math.floor(skill.level / 10) * 0.1;
+        if (bonus > 0) {
+          player.rebirthBonuses[id] = (player.rebirthBonuses[id] || 0) + bonus;
+          bonusHTML += `<li><strong>${skill.name}</strong> : +${bonus.toFixed(1)} bonus Rebirth</li>`;
+        }
+      }
+    }
+    bonusHTML += "</ul>";
+    document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
+  
+    // 🔁 Réinitialisation du joueur
     const savedBonuses = { ...player.rebirthBonuses };
   
     Object.assign(player, {
@@ -176,7 +194,7 @@ if (skillActif) {
       });
     }
   
-    // ✅ Réactiver les onglets
+    // ✅ Réactiver l’UI
     document.querySelectorAll("#tabs button").forEach(btn => {
       btn.disabled = false;
       btn.style.opacity = 1;
@@ -194,6 +212,8 @@ if (skillActif) {
     showToast("🔁 Nouvelle vie lancée ! Tes bonus sont actifs.");
     updateUI();
   }
+  
+  
   
 
   // 🎲 Système complet d’événements aléatoires
