@@ -1,5 +1,13 @@
 // jobs.js (ajout des jobs de combat évolutifs)
 
+
+function formatCurrency(value) {
+  if (value >= 1_000_000) return (value / 1_000_000).toFixed(2) + "M";
+  if (value >= 1_000) return (value / 1_000).toFixed(2) + "k";
+  return value.toFixed(2); // 👈 garde les décimales pour petits revenus
+}
+
+
 class Job {
   constructor({ id, name, baseIncome, interval, requiredSkill, requiredLevel, skillRequired, group, upgradesTo }) {
     this.id = id;
@@ -213,18 +221,20 @@ function renderJobs() {
       if (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel) return;
 
       job.loadSavedData();
-      const revenu = Math.round(job.getIncome());
+      const revenu = job.getIncome(); // ne pas arrondir
+      const ticksParJour = Math.floor(86400 / job.interval);
+      const revenuParJour = revenu * ticksParJour;
       const isCurrent = player.currentJobId === job.id;
-
+      
       groupContent += `
         <div class="job-entry ${isCurrent ? 'active-job' : ''}">
-          <strong>${job.name}</strong> (Niveau ${job.level}) - ${revenu} 🍓 / tick
+          <strong>${job.name}</strong> (Niveau ${job.level}) - ${formatCurrency(revenuParJour)} 💰 / jour
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" style="width: ${job.getProgress()}%; background: #ff6f00;"></div>
           </div>
           <button onclick="selectJob('${job.id}')">${isCurrent ? 'Annuler' : 'Choisir'}</button>
         </div>
-      `;
+      `;      
     });
 
     if (groupContent !== "") {
