@@ -270,8 +270,8 @@ async function simulateCombat(playerA, playerB) {
       if (statsA.name === currentUsername) {
         player.dead = true;
         savePlayerData(currentUserId);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        lockDeathMode(); // ✅ au lieu de triggerRebirth direct
+        lockDeathMode();         // 🔒 Verrouille l’UI
+        updateUI();              // ✅ Affiche le bouton de Rebirth si besoin
       }
 
       return;
