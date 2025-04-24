@@ -54,7 +54,7 @@ if (skillActif) {
   const skill = player.skills[player.currentSkillId];
 
   // Tu peux ajuster ce multiplicateur pour encore plus de vitesse
-  const SKILL_XP_MULTIPLIER = 1; // 💥 tu peux mettre 10, 20, 100 selon ce que tu veux
+  const SKILL_XP_MULTIPLIER = 2; // 💥 tu peux mettre 10, 20, 100 selon ce que tu veux
   const gain = applySpeed(skill.getXpGain?.() || 0) * SKILL_XP_MULTIPLIER;
   player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
 
