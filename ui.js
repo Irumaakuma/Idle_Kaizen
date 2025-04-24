@@ -3,9 +3,9 @@ function renderSidebar() {
   document.getElementById("money-display").textContent = formatNumber(player.berries);
 
   const job = jobs.find(j => j.id === player.currentJobId);
-  const revenuParSeconde = job ? (job.getIncome() * 1000) / job.interval : 0;
-
-  document.getElementById("income-display").textContent = formatCurrency(totalIncome);
+  const jobRevenu = job ? applySpeed(job.getIncome()) : 0;
+  
+  document.getElementById("income-display").textContent = formatCurrency(jobRevenu);
   document.getElementById("expense-display").textContent = "0";
 
   if (job) {
