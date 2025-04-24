@@ -96,12 +96,12 @@ window.Skill = Skill;
 
 window.defaultSkills = {
   // 🧱 Fondamentales
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 250, baseEffect: 0.01, group: "fondamentale" }),
 
 
   // 🗡️ Combat
