@@ -222,7 +222,7 @@ function renderJobs() {
 
       job.loadSavedData();
       const revenu = applySpeed(job.getIncome());
-      const ticksParJour = Math.floor(86400 / job.interval);
+      const ticksParJour = Math.floor(86400_000 / job.interval);
       const revenuParJour = revenu * ticksParJour;
       const isCurrent = player.currentJobId === job.id;
       
