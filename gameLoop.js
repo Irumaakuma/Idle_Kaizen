@@ -49,23 +49,36 @@ function checkJobEvolution() {
       }
     }
   
-    // ✨ XP compétence
-    if (skillActif) {
-      const skill = player.skills[player.currentSkillId];
-      const gain = applySpeed(skill.getXpGain?.() || 0);
-      player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
-  
-      if (player.queuedSkillXp >= 1) {
-        const wholeXp = Math.floor(player.queuedSkillXp);
-        skill.xp += wholeXp;
-        player.queuedSkillXp -= wholeXp;
-  
-        while (skill.xp >= skill.getMaxXp()) {
-          skill.xp -= skill.getMaxXp();
-          skill.level++;
-        }
-      }
-    }
+   // ✨ XP compétence (patch fluide)
+if (skillActif) {
+  const skill = player.skills[player.currentSkillId];
+
+  // Tu peux ajuster ce multiplicateur pour encore plus de vitesse
+  const gain = applySpeed(skill.getXpGain?.() || 0) * 10;
+  player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
+
+  // Ajouter tout le gain immédiatement (même fractionnaire)
+  skill.xp += player.queuedSkillXp;
+  player.queuedSkillXp = 0;
+
+  // Monter de niveau si besoin
+  while (skill.xp >= skill.getMaxXp()) {
+    skill.xp -= skill.getMaxXp();
+    skill.level++;
+  }
+
+  // Mettre à jour la barre manuellement pour qu'elle bouge à chaque tick
+  const bar = document.getElementById("current-skill-bar");
+  if (bar) {
+    bar.style.width = `${skill.getProgress()}%`;
+  }
+
+  const skillDisplay = document.getElementById("current-skill-display");
+  if (skillDisplay) {
+    skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
+  }
+}
+
   
     // 📆 Mise à jour événements
     if (player.dailyBonus?.duration > 0) {
