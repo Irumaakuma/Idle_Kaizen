@@ -69,20 +69,25 @@ class Job {
   run() {
     const income = applySpeed(this.getIncome());
   
-    // Initialiser la réserve si elle n'existe pas encore
+    // ✅ Initialisation sécurisée
     player.queuedIncome = player.queuedIncome || 0;
   
-    // Ajouter le revenu à la réserve
+    // 🧮 Accumuler le revenu fractionnaire
     player.queuedIncome += income;
   
-    // Lorsque 1 ou plus est atteint, convertir en berries
+    // 🐞 Debugging
+    console.log(`💰 Income généré : ${income.toFixed(4)} | 📦 En attente : ${player.queuedIncome.toFixed(4)}`);
+  
+    // ✅ Convertir dès que >= 1
     if (player.queuedIncome >= 1) {
       const whole = Math.floor(player.queuedIncome);
       gainBerries(whole);
       player.queuedIncome -= whole;
+  
+      console.log(`✅ ${whole} berries gagnés. Nouveau stock : ${player.berries}`);
     }
   
-    // Gagner de l'XP normalement
+    // 🔁 Gagner de l’XP du job
     this.gainXp();
   }
   
