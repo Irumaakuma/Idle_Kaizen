@@ -100,8 +100,7 @@ function checkJobEvolution() {
         }
         bonusHTML += "</ul>";
   
-        document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
-        document.getElementById("rebirth-section").style.display = "block";
+        document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;        
         showToast("☠️ Tu es mort de vieillesse à " + Math.floor(player.age) + " ans...");
       }
     }
@@ -247,7 +246,6 @@ function triggerDailyEvent() {
     if (Math.random() < 0.001) {
       player.dead = true;
       showToast("☠️ Tu as été victime d'un événement fatal !");
-      document.getElementById("rebirth-section").style.display = "block";
     }
   } else {
     player.dailyBonus = null;
