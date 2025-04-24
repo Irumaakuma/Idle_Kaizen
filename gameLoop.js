@@ -52,7 +52,7 @@ function checkJobEvolution() {
     // ✨ XP compétence
     if (skillActif) {
       const skill = player.skills[player.currentSkillId];
-      const gain = applySpeed(skill.getXpGain?.() || 0);
+      const gain = applySpeed(skill.getXpGain?.() || 0) * 20;
       player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
   
       if (player.queuedSkillXp >= 1) {
