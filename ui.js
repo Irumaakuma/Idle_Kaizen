@@ -60,7 +60,7 @@ function renderSidebar() {
   document.getElementById("faction-display").textContent =
     `${faction}${rank && faction !== "Civil" ? " (" + rank + ")" : ""}`;
 
-  // 🧭 Log Pose fusionné ici
+  // 🧭 Log Pose (fusionné ici)
   const existing = document.getElementById("log-pose-box");
   if (existing) existing.remove();
 
@@ -76,9 +76,9 @@ function renderSidebar() {
       const type = player.dailyBonus.type === "positive" ? "🌟 Bonus" : "⚠️ Malus";
       const effect = player.dailyBonus.effect || "Effet inconnu";
 
-      const seconds = player.dailyBonus.duration * 10;
-      const min = Math.floor(seconds / 60);
-      const sec = seconds % 60;
+      const totalSeconds = Math.floor(player.dailyBonus.duration);
+      const min = Math.floor(totalSeconds / 60);
+      const sec = totalSeconds % 60;
 
       const chanceBoost = player.skills.cartographie?.getEventChanceBoost?.(player.skills.cartographie.level || 0) || 0;
       const chance = (15 + chanceBoost * 100).toFixed(2);
@@ -100,6 +100,7 @@ function renderSidebar() {
   renderFactionChoice();
   unlockSkillsProgressively();
 }
+
 
 
 
