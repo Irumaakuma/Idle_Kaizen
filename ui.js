@@ -110,8 +110,8 @@ function updateTimeUI() {
   const age = Math.floor(totalDays / 365);
   const dayOfYear = totalDays % 365;
 
-  document.getElementById("display-age").textContent = 14 + age;
-  document.getElementById("day-count").textContent = dayOfYear;
+  document.getElementById("display-age").textContent = Math.floor(14 + age);
+  document.getElementById("day-count").textContent = Math.floor(dayOfYear);
 
   // 🔥 Suppression du bloc logposeSidebar ici — il est géré dans renderSidebar()
 }
