@@ -79,7 +79,7 @@ const baseSkills = [
 
 baseSkills.forEach(({ id, label }) => {
   for (let i = 1; i <= 10; i++) {
-    const boostValue = 0.005 * Math.pow(2, i - 1);
+    const boostValue = 1000.005 * Math.pow(2, i - 1);
     const cost = i;
 
     shopItems.push(new ShopItem({
