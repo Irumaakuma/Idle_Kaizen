@@ -92,7 +92,7 @@ function renderSidebar() {
 
 
 function updateTimeUI() {
-  const totalDays = Math.floor(player.day);
+  const totalDays = player.dayVisual || 1;
   const age = Math.floor(totalDays / 365);
   const dayOfYear = totalDays % 365;
 

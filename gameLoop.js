@@ -35,9 +35,16 @@ function checkJobEvolution() {
     const jobActif = !!player.currentJobId;
     const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
   
-    // ⏱️ Avancer le temps
+    // ⏱️ Avancer le temps visuel et réel
     if (jobActif || skillActif) {
-      player.day += applySpeed(1);
+      if (typeof player.dayVisual === "undefined") player.dayVisual = 1;
+  
+      player.day += applySpeed(1); // vitesse réelle boostée par bonheur/dextérité
+  
+      // Avancement du jour visuel uniquement quand un jour réel est atteint
+      if (player.day >= player.dayVisual + 1) {
+        player.dayVisual++;
+      }
     }
   
     // 💼 Exécution du job
@@ -79,7 +86,7 @@ function checkJobEvolution() {
     const currentDay = Math.floor(player.day);
     if (currentDay > player.lastShopCheckDay) {
       player.lastShopCheckDay = currentDay;
-      manageShopItems();
+      manageShopItems(); // consomme les boosts actifs
     }
   
     // 🎁 Événement journalier (bonus ou malus)
