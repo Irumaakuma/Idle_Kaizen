@@ -46,7 +46,7 @@ class Job {
   }
 
   gainXp() {
-    const gain = applySpeed(this.getXpGain());
+    const gain = applySpeed(this.getXpGain()) / 10;
     this.xp += gain;
     if (this.xp >= this.getMaxXp()) {
       let excess = this.xp - this.getMaxXp();
@@ -67,7 +67,7 @@ class Job {
   }
 
   run() {
-    const income = applySpeed(this.getIncome());
+    const income = applySpeed(this.getIncome()) /10;
   
     // ✅ Initialisation sécurisée
     player.queuedIncome = player.queuedIncome || 0;
