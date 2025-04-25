@@ -261,14 +261,14 @@ function checkJobEvolution() {
   };
   
   function triggerDailyEvent() {
-    // ⛔️ Empêche d'empiler plusieurs événements à la fois
+    // ⛔️ Ne pas empiler si un événement est encore actif
     if (player.dailyBonus?.duration > 0) return;
   
-    // 🔄 Réinitialise les modificateurs du jour
+    // 🔁 Reset des modificateurs quotidiens
     player.dailyModifiers = { income: 1, interval: 1, price: 1, xp: 1 };
     player.canUnlockHakiToday = false;
   
-    // 🎯 Chance boostée par la compétence "Cartographie"
+    // 🎯 Boost de chance selon cartographie
     const eventChanceBonus = player.skills.cartographie?.getEventChanceBoost?.(player.skills.cartographie.level || 0) || 0;
     const boostedChance = 0.15 + eventChanceBonus;
   
@@ -279,11 +279,11 @@ function checkJobEvolution() {
       const pool = isPositive ? dailyEvents.positive : dailyEvents.negative;
       const event = pool[Math.floor(Math.random() * pool.length)];
   
-      // 💥 Certains événements sont instantanés (ne durent pas dans le temps)
       const isInstant = !!event.givesImmediateBonus;
-      const duration = isInstant ? 1 : 30; // 30 ticks = 5 minutes IRL
   
-      // 💾 Stocker l'effet actif
+      // ✅ Durée en secondes réelles (300 = 5 minutes IRL)
+      const duration = isInstant ? 1 : 300;
+  
       player.dailyBonus = {
         type: isPositive ? "positive" : "negative",
         duration,
@@ -294,21 +294,19 @@ function checkJobEvolution() {
       showToast(`${isPositive ? "🌟" : "⚠️"} ${event.message}`);
       event.effect?.();
   
-      // 👑 Haki potentiellement activable après un bonus
       if (isPositive) {
         player.canUnlockHakiToday = true;
       }
   
-      // ☠️ Faible probabilité de mort si événement négatif
       if (!isPositive && Math.random() < 0.001) {
         player.dead = true;
         showToast("☠️ Tu as été victime d'un événement fatal !");
       }
     } else {
-      // ❌ Aucun événement déclenché
       player.dailyBonus = null;
     }
   }
+  
   
 
 
