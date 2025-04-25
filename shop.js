@@ -52,7 +52,7 @@ for (let i = 1; i <= 10; i++) {
   }));
 }
 
-// 🧭 Log Pose
+// 🧭 Log Pose (toujours visible)
 shopItems.push(new ShopItem({
   id: "log_pos",
   name: "Log Pose",
@@ -63,7 +63,7 @@ shopItems.push(new ShopItem({
     player.hasLogPose = true;
     return () => { player.hasLogPose = false; };
   },
-  unlockCondition: () => !player.hasLogPose
+  unlockCondition: () => true // toujours affiché
 }));
 
 // 📚 Boosts de compétences fondamentales
@@ -107,9 +107,9 @@ function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
 
-  // 🧭 Affichage de l’événement actif (Log Pose)
+  // ⏳ Log Pose : événement actif
   if (player.hasLogPose && player.dailyBonus?.duration > 0) {
-    const remaining = player.dailyBonus.duration * 10; // 10s par tick
+    const remaining = player.dailyBonus.duration * 10;
     const minutes = Math.floor(remaining / 60);
     const seconds = remaining % 60;
     const label = player.dailyBonus.type === "positive" ? "🌟 Bonus" : "⚠️ Malus";
@@ -147,7 +147,8 @@ function renderShop() {
       .forEach(item => {
         item.unlocked = true;
         const btnLabel = item.isActive ? "Désactiver" : "Activer";
-        const locked = player.berries <= 0 && !item.isActive;
+        const isLogPose = item.id === "log_pos";
+        const locked = (player.berries <= 0 && !item.isActive) || (isLogPose && player.hasLogPose);
         const lockNote = locked ? `<span style="color:red;">(verrouillé)</span>` : "";
 
         groupHTML += `
@@ -167,14 +168,14 @@ function renderShop() {
   }
 }
 
-// 📦 Interaction
+// 🔘 Activer/Désactiver item
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
-// 🔁 Coût journalier
+// 🔁 Consommation quotidienne
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -192,7 +193,7 @@ function manageShopItems() {
   });
 }
 
-// 🌍 Exposition
+// 🌐 Exposition
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;
