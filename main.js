@@ -400,6 +400,8 @@ function unlockSkillsProgressively() {
 }
 
 
+
+
 function applyFactionBonusesToQuest(baseReward, baseDuration) {
   let reward = baseReward;
   let duration = baseDuration;

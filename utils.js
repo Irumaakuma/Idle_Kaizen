@@ -40,6 +40,8 @@ function initGame() {
 }
 
 
+
+
 // ✅ Système d'héritage basé sur la compétence liée au job
 
 function trackJobHeritage(jobId) {
