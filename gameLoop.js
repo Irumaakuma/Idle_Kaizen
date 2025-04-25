@@ -49,38 +49,37 @@ function checkJobEvolution() {
       }
     }
   
-   // ✨ XP compétence (patch fluide)
-if (skillActif) {
-  const skill = player.skills[player.currentSkillId];
-
-  // Tu peux ajuster ce multiplicateur pour encore plus de vitesse
-  const SKILL_XP_MULTIPLIER = 5; // 💥 tu peux mettre 10, 20, 100 selon ce que tu veux
-  const gain = applySpeed(skill.getXpGain?.() || 0) * SKILL_XP_MULTIPLIER;
-  player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
-
-  skill.xp += player.queuedSkillXp;
-  player.queuedSkillXp = 0;
+    // ✨ XP compétence (patch fluide)
+    if (skillActif) {
+      const skill = player.skills[player.currentSkillId];
+      const SKILL_XP_MULTIPLIER = 5;
+      const gain = applySpeed(skill.getXpGain?.() || 0) * SKILL_XP_MULTIPLIER;
   
-  while (skill.xp >= skill.getMaxXp()) {
-    skill.xp -= skill.getMaxXp();
-    skill.level++;
-  }
+      player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
+      skill.xp += player.queuedSkillXp;
+      player.queuedSkillXp = 0;
   
-
-  // Mettre à jour la barre manuellement pour qu'elle bouge à chaque tick
-  const bar = document.getElementById("current-skill-bar");
-  if (bar) {
-    bar.style.width = `${skill.getProgress()}%`;
-  }
-
-  const skillDisplay = document.getElementById("current-skill-display");
-  if (skillDisplay) {
-    skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
-  }
-}
-
+      while (skill.xp >= skill.getMaxXp()) {
+        skill.xp -= skill.getMaxXp();
+        skill.level++;
+      }
   
-    // 📆 Mise à jour événements
+      // 🎯 Mettre à jour l’interface compétence
+      const bar = document.getElementById("current-skill-bar");
+      if (bar) {
+        bar.style.width = `${skill.getProgress()}%`;
+      }
+  
+      const skillDisplay = document.getElementById("current-skill-display");
+      if (skillDisplay) {
+        skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
+      }
+    }
+  
+    // 🛒 Vérification automatique des items shop
+    manageShopItems();
+  
+    // 📆 Mise à jour des événements quotidiens
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -89,13 +88,13 @@ if (skillActif) {
       }
     }
   
-    // 📈 Mise à jour âge + vérification de mort
+    // 📈 Mise à jour de l’âge + mort
     if (jobActif || skillActif) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
   
       updateMaxAge();
-      manageShopItems();
+      manageShopItems(); // (sécurité double si jamais appelé ailleurs)
   
       if (player.age >= player.maxAge && !player.dead) {
         player.dead = true;
@@ -113,13 +112,14 @@ if (skillActif) {
         }
         bonusHTML += "</ul>";
   
-        document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;        
+        document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
         showToast("☠️ Tu es mort de vieillesse à " + Math.floor(player.age) + " ans...");
       }
     }
   
     updateUI();
   }
+  
   
   
   
