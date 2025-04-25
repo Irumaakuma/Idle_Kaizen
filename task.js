@@ -1,5 +1,5 @@
 class Task {
-  constructor(id, name, baseXpPerTick = 3) {
+  constructor(id, name, baseXpPerTick = 5) {
     this.id = id;
     this.name = name;
     this.level = 0;
@@ -95,13 +95,13 @@ window.Skill = Skill;
 
 // === Nouvelle structure de compétences ===
 window.defaultSkills = {
-  force:       new Skill({ id: "force", name: "Force", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }),
-  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 3, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
+  force:       new Skill({ id: "force", name: "Force", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  agilite:     new Skill({ id: "agilite", name: "Agilité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vitalite:    new Skill({ id: "vitalite", name: "Vitalité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  vigueur:     new Skill({ id: "vigueur", name: "Vigueur", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  intelligence:new Skill({ id: "intelligence", name: "Intelligence", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  endurance:   new Skill({ id: "endurance", name: "Endurance", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }),
+  dexterite:   new Skill({ id: "dexterite", name: "Dextérité", baseXpGain: 5, baseEffect: 0.01, group: "fondamentale" }), // ↖️ priorité
   
 
   // 🗡️ Combat
