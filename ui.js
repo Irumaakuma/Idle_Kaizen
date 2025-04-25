@@ -3,11 +3,27 @@ function renderSidebar() {
 
   const job = jobs.find(j => j.id === player.currentJobId);
   const revenuExact = job ? applySpeed(job.getIncome()) : 0;
+  const totalCost = window.getTotalShopCost?.() || 0;
+  const net = revenuExact - totalCost;
 
-  // ✅ Affichage direct du revenu exact (par jour in-game)
-  document.getElementById("income-display").textContent = revenuExact.toFixed(2);
+  // ✅ Affichage revenu & dépenses
+  document.getElementById("income-display").textContent = `+${revenuExact.toFixed(2)}`;
+  document.getElementById("expense-display").textContent = `-${totalCost.toFixed(2)}`;
 
-  // Job actif
+  // ✅ Solde net par jour
+  const sidebarBlock = document.querySelector(".sidebar-block:nth-child(2)");
+  let netLine = document.getElementById("net-daily-result");
+
+  if (!netLine) {
+    netLine = document.createElement("div");
+    netLine.id = "net-daily-result";
+    sidebarBlock.appendChild(netLine);
+  }
+
+  netLine.textContent = `📉 Solde net : ${net >= 0 ? "+" : ""}${net.toFixed(2)} / jour`;
+  netLine.style.color = net >= 0 ? "#00e676" : "#ff5252";
+
+  // 📋 Job actif
   if (job) {
     document.getElementById("current-job-display").textContent = `${job.name} (Nv. ${job.level})`;
     document.getElementById("current-job-bar").style.width = `${job.getProgress()}%`;
@@ -16,7 +32,7 @@ function renderSidebar() {
     document.getElementById("current-job-bar").style.width = "0%";
   }
 
-  // Compétence active
+  // 📚 Compétence active
   const skill = player.skills[player.currentSkillId];
   if (skill) {
     document.getElementById("current-skill-display").textContent = `${skill.name} (Nv. ${skill.level})`;
@@ -26,17 +42,17 @@ function renderSidebar() {
     document.getElementById("current-skill-bar").style.width = "0%";
   }
 
-  // Bonheur ou mort
+  // ❤️ Bonheur ou mort
   const bonheur = player.dead ? "💀 Mort" : player.happiness.toFixed(2);
   document.getElementById("happiness-display").textContent = bonheur;
 
-  // Espérance de vie
+  // 🧓 Espérance de vie
   const lifespan = document.querySelector(".lifespan");
   if (lifespan) {
     lifespan.textContent = `Durée de vie estimée : ${Math.floor(player.maxAge)} ans`;
   }
 
-  // Faction + rang
+  // 🏳️ Faction & rang
   const faction = player.faction === "marine"
     ? "⚓ Marine"
     : player.faction === "pirate"
@@ -46,7 +62,7 @@ function renderSidebar() {
   document.getElementById("faction-display").textContent =
     `${faction}${rank && faction !== "Civil" ? " (" + rank + ")" : ""}`;
 
-  // Log Pose (si actif)
+  // 🧭 Log Pose (événements)
   if (player.hasLogPose && player.dailyBonus?.duration) {
     const existing = document.getElementById("log-pose-box");
     if (existing) existing.remove();
@@ -71,6 +87,7 @@ function renderSidebar() {
   renderFactionChoice();
   unlockSkillsProgressively();
 }
+
 
 
 

@@ -166,3 +166,4 @@ function manageShopItems() {
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;
+window.getTotalShopCost = getTotalShopCost;
