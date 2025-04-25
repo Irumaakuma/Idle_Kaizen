@@ -52,7 +52,7 @@ for (let i = 1; i <= 10; i++) {
   }));
 }
 
-// 🧭 Log Pose (toujours visible)
+// 🧭 Log Pose (toujours visible, ne se désactive jamais tout seul)
 shopItems.push(new ShopItem({
   id: "log_pos",
   name: "Log Pose",
@@ -61,12 +61,12 @@ shopItems.push(new ShopItem({
   costPerDay: 0,
   effect: () => {
     player.hasLogPose = true;
-    return () => { player.hasLogPose = false; };
+    return () => {}; // ❌ ne le désactive jamais automatiquement
   },
-  unlockCondition: () => true // toujours affiché
+  unlockCondition: () => true
 }));
 
-// 📚 Boosts de compétences fondamentales
+// 📚 Boosts par stat
 const baseSkills = [
   { id: "force", label: "Force" },
   { id: "agilite", label: "Agilité" },
@@ -102,12 +102,12 @@ function getTotalShopCost() {
   return shopItems.filter(i => i.isActive).reduce((sum, i) => sum + i.costPerDay, 0);
 }
 
-// 🖼️ Affichage de la boutique
+// 🛍️ Affichage de la boutique
 function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
 
-  // ⏳ Log Pose : événement actif
+  // ⏳ Si Log Pose actif → affiche effet en cours
   if (player.hasLogPose && player.dailyBonus?.duration > 0) {
     const remaining = player.dailyBonus.duration * 10;
     const minutes = Math.floor(remaining / 60);
@@ -126,7 +126,7 @@ function renderShop() {
 
   const grouped = {
     bateau: "Bateaux (Bonheur)",
-    special: "Objets spéciaux",         // ✅ AJOUT ICI
+    special: "Objets spéciaux",
     force: "Boosts de Force",
     agilite: "Boosts d’Agilité",
     vitalite: "Boosts de Vitalité",
@@ -135,7 +135,6 @@ function renderShop() {
     endurance: "Boosts d’Endurance",
     dexterite: "Boosts de Dextérité"
   };
-  
 
   const totalCost = getTotalShopCost();
   container.innerHTML += `<div style="margin-bottom: 10px;"><strong>💸 Coût total actif : ${totalCost} / jour</strong></div>`;
@@ -170,14 +169,14 @@ function renderShop() {
   }
 }
 
-// 🔘 Activer/Désactiver item
+// 🔁 Activation/Désactivation
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
-// 🔁 Consommation quotidienne
+// 💸 Consommation quotidienne
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -195,7 +194,7 @@ function manageShopItems() {
   });
 }
 
-// 🌐 Exposition
+// 🌐 Export
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;
