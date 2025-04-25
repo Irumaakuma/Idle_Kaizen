@@ -29,7 +29,7 @@ class ShopItem {
 
 const shopItems = [];
 
-// Bateaux (bonus bonheur)
+// Bateaux (bonheur)
 for (let i = 1; i <= 10; i++) {
   shopItems.push(new ShopItem({
     id: `bateau_${i}`,
@@ -42,7 +42,7 @@ for (let i = 1; i <= 10; i++) {
   }));
 }
 
-// Log Pose (bonus unique)
+// Log Pose
 shopItems.push(new ShopItem({
   id: "log_pos",
   name: "Log Pose",
@@ -53,10 +53,9 @@ shopItems.push(new ShopItem({
   unlockCondition: () => !player.hasLogPose
 }));
 
-// Boosts de compétences fondamentales
+// Boosts de compétences
 const baseSkills = ["force", "agilite", "vitalite", "vigueur", "intelligence", "endurance", "dexterite"];
-
-baseSkills.forEach((skill) => {
+baseSkills.forEach(skill => {
   for (let i = 1; i <= 10; i++) {
     shopItems.push(new ShopItem({
       id: `${skill}_boost_${i}`,
@@ -70,14 +69,11 @@ baseSkills.forEach((skill) => {
   }
 });
 
-// Utilitaires
+// Affichage
 function getTotalShopCost() {
-  return shopItems
-    .filter(item => item.isActive)
-    .reduce((sum, i) => sum + i.costPerDay, 0);
+  return shopItems.filter(i => i.isActive).reduce((sum, i) => sum + i.costPerDay, 0);
 }
 
-// Affichage
 function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
@@ -98,9 +94,8 @@ function renderShop() {
       .filter(item => item.category === groupKey && item.unlockCondition())
       .forEach(item => {
         item.unlocked = true;
-        const isActive = item.isActive;
-        const btnLabel = isActive ? "Désactiver" : "Activer";
-        const locked = player.berries <= 0 && !isActive;
+        const btnLabel = item.isActive ? "Désactiver" : "Activer";
+        const locked = player.berries <= 0 && !item.isActive;
         const lockNote = locked ? `<span style="color:red;">(verrouillé)</span>` : "";
 
         groupHTML += `
@@ -120,27 +115,22 @@ function renderShop() {
   }
 }
 
-// Interactions
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
-// Tick shop (appelé dans gameLoop)
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
 
-    const costPerTick = item.costPerDay / 365;
-
-    if (player.berries < costPerTick) {
+    const cost = item.costPerDay;
+    if (player.berries < cost) {
       item.isActive = false;
       showToast(`💸 ${item.name} désactivé automatiquement (plus de berries)`);
     } else {
-      player.berries -= costPerTick;
-
-      // Sécurité : anti-NaN ou valeurs absurdes
+      player.berries -= cost;
       if (!isFinite(player.berries) || player.berries < -10000) {
         item.isActive = false;
         player.berries = 0;
@@ -150,7 +140,6 @@ function manageShopItems() {
   });
 }
 
-// Exposer
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;

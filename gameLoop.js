@@ -35,12 +35,12 @@ function checkJobEvolution() {
     const jobActif = !!player.currentJobId;
     const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
   
-    // ✅ Avancer le temps SEULEMENT si job ou compétence active
+    // Avancer le temps
     if (jobActif || skillActif) {
       player.day += applySpeed(1);
     }
   
-    // 🔁 Exécution du job
+    // Exécution du job
     if (jobActif) {
       const job = jobs.find(j => j.id === player.currentJobId);
       if (job) {
@@ -49,11 +49,10 @@ function checkJobEvolution() {
       }
     }
   
-    // ✨ XP compétence (patch fluide)
+    // Gain de compétence
     if (skillActif) {
       const skill = player.skills[player.currentSkillId];
-      const SKILL_XP_MULTIPLIER = 5;
-      const gain = applySpeed(skill.getXpGain?.() || 0) * SKILL_XP_MULTIPLIER;
+      const gain = applySpeed(skill.getXpGain?.() || 0) * 5;
   
       player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
       skill.xp += player.queuedSkillXp;
@@ -64,22 +63,25 @@ function checkJobEvolution() {
         skill.level++;
       }
   
-      // 🎯 Mettre à jour l’interface compétence
       const bar = document.getElementById("current-skill-bar");
-      if (bar) {
-        bar.style.width = `${skill.getProgress()}%`;
-      }
+      if (bar) bar.style.width = `${skill.getProgress()}%`;
   
       const skillDisplay = document.getElementById("current-skill-display");
-      if (skillDisplay) {
-        skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
-      }
+      if (skillDisplay) skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
     }
   
-    // 🛒 Vérification automatique des items shop
-    manageShopItems();
+    // 🛒 Consommation shop 1x par jour
+    if (typeof player.lastShopCheckDay === "undefined") {
+      player.lastShopCheckDay = Math.floor(player.day);
+    }
   
-    // 📆 Mise à jour des événements quotidiens
+    const currentDay = Math.floor(player.day);
+    if (currentDay > player.lastShopCheckDay) {
+      player.lastShopCheckDay = currentDay;
+      manageShopItems(); // ✅ Consomme le coût par jour
+    }
+  
+    // 🎁 Événements
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -88,13 +90,12 @@ function checkJobEvolution() {
       }
     }
   
-    // 📈 Mise à jour de l’âge + mort
+    // Âge & mort
     if (jobActif || skillActif) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
   
       updateMaxAge();
-      manageShopItems(); // (sécurité double si jamais appelé ailleurs)
   
       if (player.age >= player.maxAge && !player.dead) {
         player.dead = true;
@@ -113,12 +114,13 @@ function checkJobEvolution() {
         bonusHTML += "</ul>";
   
         document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
-        showToast("☠️ Tu es mort de vieillesse à " + Math.floor(player.age) + " ans...");
+        showToast(`☠️ Tu es mort de vieillesse à ${Math.floor(player.age)} ans...`);
       }
     }
   
     updateUI();
   }
+  
   
   
   
