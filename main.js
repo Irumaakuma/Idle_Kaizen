@@ -455,17 +455,96 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 100);
 });
 
+function startSmoothGameLoop() {
+  let lastTick = performance.now();
+
+  function loop(now) {
+    const delta = (now - lastTick) / 1000; // en secondes
+    lastTick = now;
+
+    if (player.dead) return;
+
+    // 🕒 Avancer le temps fluide (1 jour par seconde * modificateurs)
+    const daysPerSecond = 1 * applySpeed(1);
+    player.day += daysPerSecond * delta;
+
+    if (player.dayVisual === undefined) player.dayVisual = 1;
+    if (player.day >= player.dayVisual + 1) {
+      player.dayVisual = Math.floor(player.day);
+    }
+
+    // 💼 Job actif
+    if (player.currentJobId) {
+      const job = jobs.find(j => j.id === player.currentJobId);
+      if (job) job.run(); // revenu + XP
+    }
+
+    // 📚 Compétence active
+    if (player.currentSkillId && player.skills[player.currentSkillId]?.unlocked) {
+      const skill = player.skills[player.currentSkillId];
+      const gain = applySpeed(skill.getXpGain?.() || 0) * 5 * delta;
+
+      player.queuedSkillXp += gain;
+      skill.xp += player.queuedSkillXp;
+      player.queuedSkillXp = 0;
+
+      while (skill.xp >= skill.getMaxXp()) {
+        skill.xp -= skill.getMaxXp();
+        skill.level++;
+      }
+
+      const bar = document.getElementById("current-skill-bar");
+      if (bar) bar.style.width = `${skill.getProgress()}%`;
+
+      const skillLabel = document.getElementById("current-skill-display");
+      if (skillLabel) skillLabel.textContent = `${skill.name} (Nv. ${skill.level})`;
+    }
+
+    // ⏳ Événement actif : décrémentation temps réel
+    if (player.dailyBonus?.duration > 0) {
+      player.dailyBonus.duration -= delta;
+      if (player.dailyBonus.duration <= 0) {
+        player.dailyBonus = null;
+        showToast("⏳ L'effet de l'événement est terminé.");
+      }
+    }
+
+    // 👴 Vieillissement
+    player.age = 14 + Math.floor(player.day / 365);
+    updateMaxAge();
+
+    // ☠️ Mort de vieillesse
+    if (!player.dead && player.age >= player.maxAge) {
+      player.dead = true;
+      showToast(`☠️ Tu es mort de vieillesse à ${Math.floor(player.age)} ans...`);
+      triggerRebirth(); // ou lock UI + bouton Rebirth
+    }
+
+    updateUI();
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+}
+
+
 
 function startGame() {
   console.log("🚀 Lancement du jeu avec currentUserId =", currentUserId);
-  updateUI();
-  startRealTimeEventLoop(); // 🔁 lancement du système d'événements IRL
-  setTimeout(() => {
-    if (typeof player !== "undefined") {
-      setInterval(updateGameLoop, 1000 / updateSpeed);
+
+  updateUI(); // met à jour tout ce qu’on peut au début
+
+  // ⏱️ Boucle de progression fluide façon Progress Knight
+  startSmoothGameLoop();
+
+  // 🎲 Déclenchement d’un événement aléatoire toutes les 10 secondes réelles
+  setInterval(() => {
+    if (!player.dead) {
+      triggerDailyEvent(); // tente un bonus/malus
     }
-  }, 100);
+  }, 10000); // 10 secondes IRL
 }
+
 
 window.addEventListener("DOMContentLoaded", () => {
   console.log("✅ DOM prêt, vérification de currentUserId...");

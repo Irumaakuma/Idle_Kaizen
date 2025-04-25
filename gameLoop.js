@@ -260,49 +260,56 @@ function checkJobEvolution() {
     ]
   };
   
-function triggerDailyEvent() {
-  // ⛔️ Si un événement est encore actif, ne rien faire
-  if (player.dailyBonus?.duration > 0) return;
-
-  player.dailyModifiers = { income: 1, interval: 1, price: 1, xp: 1 };
-  player.canUnlockHakiToday = false;
-
-  const eventChanceBonus = player.skills.cartographie?.getEventChanceBoost?.(player.skills.cartographie.level || 0) || 0;
-  const eventDurationBonus = player.skills.manoeuvre_navire?.getEventDurationBoost?.(player.skills.manoeuvre_navire.level || 0) || 0;
-  const boostedChance = 0.15 + eventChanceBonus;
-
-  const roll = Math.random();
-
-  if (roll < boostedChance) {
-    const isPositive = Math.random() < 0.5;
-    const pool = isPositive ? dailyEvents.positive : dailyEvents.negative;
-    const event = pool[Math.floor(Math.random() * pool.length)];
-
-    const isInstant = !!event.givesImmediateBonus;
-    const duration = isInstant ? 1 : 30 + eventDurationBonus;
-
-    player.dailyBonus = {
-      type: isPositive ? "positive" : "negative",
-      duration,
-      effect: event.message,
-      startTime: Date.now()
-    };
-
-    showToast(`${isPositive ? "🌟" : "⚠️"} ${event.message}`);
-    event.effect();
-
-    if (isPositive) {
-      player.canUnlockHakiToday = true;
+  function triggerDailyEvent() {
+    // ⛔️ Empêche d'empiler plusieurs événements à la fois
+    if (player.dailyBonus?.duration > 0) return;
+  
+    // 🔄 Réinitialise les modificateurs du jour
+    player.dailyModifiers = { income: 1, interval: 1, price: 1, xp: 1 };
+    player.canUnlockHakiToday = false;
+  
+    // 🎯 Chance boostée par la compétence "Cartographie"
+    const eventChanceBonus = player.skills.cartographie?.getEventChanceBoost?.(player.skills.cartographie.level || 0) || 0;
+    const boostedChance = 0.15 + eventChanceBonus;
+  
+    const roll = Math.random();
+  
+    if (roll < boostedChance) {
+      const isPositive = Math.random() < 0.5;
+      const pool = isPositive ? dailyEvents.positive : dailyEvents.negative;
+      const event = pool[Math.floor(Math.random() * pool.length)];
+  
+      // 💥 Certains événements sont instantanés (ne durent pas dans le temps)
+      const isInstant = !!event.givesImmediateBonus;
+      const duration = isInstant ? 1 : 30; // 30 ticks = 5 minutes IRL
+  
+      // 💾 Stocker l'effet actif
+      player.dailyBonus = {
+        type: isPositive ? "positive" : "negative",
+        duration,
+        effect: event.message,
+        startTime: Date.now()
+      };
+  
+      showToast(`${isPositive ? "🌟" : "⚠️"} ${event.message}`);
+      event.effect?.();
+  
+      // 👑 Haki potentiellement activable après un bonus
+      if (isPositive) {
+        player.canUnlockHakiToday = true;
+      }
+  
+      // ☠️ Faible probabilité de mort si événement négatif
+      if (!isPositive && Math.random() < 0.001) {
+        player.dead = true;
+        showToast("☠️ Tu as été victime d'un événement fatal !");
+      }
+    } else {
+      // ❌ Aucun événement déclenché
+      player.dailyBonus = null;
     }
-
-    if (!isPositive && Math.random() < 0.001) {
-      player.dead = true;
-      showToast("☠️ Tu as été victime d'un événement fatal !");
-    }
-  } else {
-    player.dailyBonus = null;
   }
-}
+  
 
 
 
