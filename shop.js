@@ -126,6 +126,7 @@ function renderShop() {
 
   const grouped = {
     bateau: "Bateaux (Bonheur)",
+    special: "Objets spéciaux",         // ✅ AJOUT ICI
     force: "Boosts de Force",
     agilite: "Boosts d’Agilité",
     vitalite: "Boosts de Vitalité",
@@ -134,6 +135,7 @@ function renderShop() {
     endurance: "Boosts d’Endurance",
     dexterite: "Boosts de Dextérité"
   };
+  
 
   const totalCost = getTotalShopCost();
   container.innerHTML += `<div style="margin-bottom: 10px;"><strong>💸 Coût total actif : ${totalCost} / jour</strong></div>`;
