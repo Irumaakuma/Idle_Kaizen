@@ -181,3 +181,26 @@ button.danger:hover {
   color: #888;
   margin-top: 4px;
 }
+
+.shop-category-title {
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  background-color: #292929;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border-left: 4px solid #00e676;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.shop-category-title:hover {
+  background-color: #333;
+}
+
+.shop-category-content {
+  padding-left: 10px;
+  margin-bottom: 10px;
+  display: block;
+}

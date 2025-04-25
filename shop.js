@@ -52,7 +52,7 @@ for (let i = 1; i <= 10; i++) {
   }));
 }
 
-// 🧭 Log Pose (toujours visible, ne se désactive jamais tout seul)
+// 🧭 Log Pose
 shopItems.push(new ShopItem({
   id: "log_pos",
   name: "Log Pose",
@@ -61,7 +61,7 @@ shopItems.push(new ShopItem({
   costPerDay: 0,
   effect: () => {
     player.hasLogPose = true;
-    return () => {}; // ❌ ne le désactive jamais automatiquement
+    return () => {};
   },
   unlockCondition: () => true
 }));
@@ -107,7 +107,7 @@ function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
 
-  // ⏳ Si Log Pose actif → affiche effet en cours
+  // ⏳ Log Pose : événement actif
   if (player.hasLogPose && player.dailyBonus?.duration > 0) {
     const remaining = player.dailyBonus.duration * 10;
     const minutes = Math.floor(remaining / 60);
@@ -150,12 +150,11 @@ function renderShop() {
         const btnLabel = item.isActive ? "Désactiver" : "Activer";
         const isLogPose = item.id === "log_pos";
         const locked = (player.berries <= 0 && !item.isActive) || (isLogPose && player.hasLogPose);
-        const lockNote = locked ? `<span style="color:red;">(verrouillé)</span>` : "";
 
         groupHTML += `
           <div class="shop-item">
             <strong>${item.name}</strong> - ${item.description} <br>
-            💸 ${item.costPerDay} / jour ${lockNote}
+            💸 ${item.costPerDay} / jour
             <button onclick="toggleShopItem('${item.id}')" ${locked ? 'disabled' : ''}>
               ${btnLabel}
             </button>
@@ -164,19 +163,34 @@ function renderShop() {
       });
 
     if (groupHTML !== "") {
-      container.innerHTML += `<div class="group-title">${groupName}</div>${groupHTML}`;
+      const categoryId = `shop-cat-${groupKey}`;
+      container.innerHTML += `
+        <div class="shop-category-title" onclick="toggleShopCategory('${categoryId}')">
+          ${groupName} ⬇️
+        </div>
+        <div class="shop-category-content" id="${categoryId}">
+          ${groupHTML}
+        </div>
+      `;
     }
   }
 }
 
-// 🔁 Activation/Désactivation
+// 🔁 Toggle affichage catégorie
+function toggleShopCategory(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === "none" ? "block" : "none";
+}
+
+// 🔘 Activation/Désactivation
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
-// 💸 Consommation quotidienne
+// 🔁 Paiement journalier
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -194,8 +208,9 @@ function manageShopItems() {
   });
 }
 
-// 🌐 Export
+// 🌍 Exports
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;
 window.getTotalShopCost = getTotalShopCost;
+window.toggleShopCategory = toggleShopCategory;
