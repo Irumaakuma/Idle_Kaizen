@@ -36,33 +36,30 @@ function checkJobEvolution() {
     const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
   
     // ⏱️ Avancer le temps visuel et réel
-    if (typeof player.dayVisual === "undefined") player.dayVisual = 1;
-    if (typeof player._lastDayTick === "undefined") player._lastDayTick = player.day;
+    if (jobActif || skillActif) {
+      if (typeof player.dayVisual === "undefined") player.dayVisual = 1;
   
-    const speed = applySpeed(1);
-    player.day += speed;
+      player.day += applySpeed(1); // vitesse réelle boostée par bonheur/dextérité
   
-    const deltaDay = player.day - player._lastDayTick;
-    player._lastDayTick = player.day;
-  
-    // Avancement du jour visuel uniquement quand un jour réel est atteint
-    if (player.day >= player.dayVisual + 1) {
-      player.dayVisual++;
+      // Avancement du jour visuel uniquement quand un jour réel est atteint
+      if (player.day >= player.dayVisual + 1) {
+        player.dayVisual++;
+      }
     }
   
-    // 💼 Exécution du job en fonction du temps réel écoulé
+    // 💼 Exécution du job
     if (jobActif) {
       const job = jobs.find(j => j.id === player.currentJobId);
-      if (job && typeof job.run === "function") {
-        job.run(deltaDay); // 👈 job adapté à la durée réelle
+      if (job) {
+        job.run();
         checkJobEvolution();
       }
     }
   
-    // 📚 XP compétence active avec temps fluide
+    // 📚 XP compétence active
     if (skillActif) {
       const skill = player.skills[player.currentSkillId];
-      const gain = (skill.getXpGain?.() || 0) * deltaDay * 5;
+      const gain = applySpeed(skill.getXpGain?.() || 0) * 5;
   
       player.queuedSkillXp = (player.queuedSkillXp || 0) + gain;
       skill.xp += player.queuedSkillXp;

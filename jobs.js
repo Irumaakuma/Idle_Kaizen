@@ -45,19 +45,19 @@ class Job {
     return baseGain * this.getXpMultiplier();
   }
 
-  gainXp(delta = 1) {
-    const gain = applySpeed(this.getXpGain()) * delta;
+  gainXp() {
+    const gain = applySpeed(this.getXpGain());
     this.xp += gain;
-  
-    while (this.xp >= this.getMaxXp()) {
-      this.xp -= this.getMaxXp();
-      this.level++;
+    if (this.xp >= this.getMaxXp()) {
+      let excess = this.xp - this.getMaxXp();
+      while (excess >= 0) {
+        this.level++;
+        excess -= this.getMaxXp();
+      }
+      this.xp = this.getMaxXp() + excess;
     }
-  
-    // ✅ Sauvegarde de l'état dans player.jobs
     player.jobs[this.id] = { level: this.level, xp: this.xp };
   }
-  
 
   getIncome() {
     const skillMult = this.getXpMultiplier();
@@ -66,8 +66,8 @@ class Job {
     return this.baseIncome * levelMult * skillMult * agiMult;
   }
 
-  run(delta = 1) {
-    const income = applySpeed(this.getIncome()) * delta;
+  run() {
+    const income = applySpeed(this.getIncome());
   
     // ✅ Initialisation sécurisée
     player.queuedIncome = player.queuedIncome || 0;
@@ -87,8 +87,8 @@ class Job {
       console.log(`✅ ${whole} berries gagnés. Nouveau stock : ${player.berries}`);
     }
   
-    // 🔁 Gagner de l’XP du job (avec delta)
-    this.gainXp(delta);
+    // 🔁 Gagner de l’XP du job
+    this.gainXp();
   }
   
 
