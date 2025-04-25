@@ -129,15 +129,17 @@ function toggleShopItem(id) {
   updateUI();
 }
 
-// Vérification régulière
-function manageShopItems() {
-  shopItems.forEach(item => {
-    if (item.isActive && player.berries <= 0) {
-      item.isActive = false;
-      showToast(`💸 ${item.name} désactivé automatiquement (plus de berries)`);
-    }
-  });
+if (item.isActive) {
+  const costPerTick = item.costPerDay / 365;
+
+  if (player.berries < costPerTick) {
+    item.isActive = false;
+    showToast(`💸 ${item.name} désactivé automatiquement (plus de berries)`);
+  } else {
+    player.berries -= costPerTick;
+  }
 }
+
 
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
