@@ -459,13 +459,13 @@ function startSmoothGameLoop() {
   let lastTick = performance.now();
 
   function loop(now) {
-    const delta = (now - lastTick) / 1000; // en secondes
+    const delta = (now - lastTick) / 1000; // secondes écoulées
     lastTick = now;
 
     if (player.dead) return;
 
-    // 🕒 Avancer le temps fluide (1 jour par seconde * modificateurs)
-    const daysPerSecond = 1 * applySpeed(1);
+    // 🕒 Avancer le temps à rythme FIXE (1 jour / seconde)
+    const daysPerSecond = 1;
     player.day += daysPerSecond * delta;
 
     if (player.dayVisual === undefined) player.dayVisual = 1;
@@ -473,16 +473,19 @@ function startSmoothGameLoop() {
       player.dayVisual = Math.floor(player.day);
     }
 
-    // 💼 Job actif
+    // 📈 Appliquer la vitesse de jeu (boosts) uniquement à XP/revenus
+    const gameSpeedMultiplier = applySpeed(1);
+
+    // 💼 Job actif (revenus fluide)
     if (player.currentJobId) {
       const job = jobs.find(j => j.id === player.currentJobId);
-      if (job) job.run(); // revenu + XP
+      if (job) job.run(); // gère aussi revenu XP job
     }
 
-    // 📚 Compétence active
+    // 📚 Compétence active (XP fluide)
     if (player.currentSkillId && player.skills[player.currentSkillId]?.unlocked) {
       const skill = player.skills[player.currentSkillId];
-      const gain = applySpeed(skill.getXpGain?.() || 0) * 5 * delta;
+      const gain = gameSpeedMultiplier * (skill.getXpGain?.() || 0) * 5 * delta;
 
       player.queuedSkillXp += gain;
       skill.xp += player.queuedSkillXp;
@@ -493,6 +496,7 @@ function startSmoothGameLoop() {
         skill.level++;
       }
 
+      // UI: barre & label
       const bar = document.getElementById("current-skill-bar");
       if (bar) bar.style.width = `${skill.getProgress()}%`;
 
@@ -500,7 +504,7 @@ function startSmoothGameLoop() {
       if (skillLabel) skillLabel.textContent = `${skill.name} (Nv. ${skill.level})`;
     }
 
-    // ⏳ Événement actif : décrémentation temps réel
+    // ⏳ Événement journalier actif
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration -= delta;
       if (player.dailyBonus.duration <= 0) {
@@ -509,7 +513,7 @@ function startSmoothGameLoop() {
       }
     }
 
-    // 👴 Vieillissement
+    // 👴 Vieillissement (1 an tous les 365 jours)
     player.age = 14 + Math.floor(player.day / 365);
     updateMaxAge();
 
@@ -517,7 +521,7 @@ function startSmoothGameLoop() {
     if (!player.dead && player.age >= player.maxAge) {
       player.dead = true;
       showToast(`☠️ Tu es mort de vieillesse à ${Math.floor(player.age)} ans...`);
-      triggerRebirth(); // ou lock UI + bouton Rebirth
+      triggerRebirth();
     }
 
     updateUI();
@@ -526,6 +530,7 @@ function startSmoothGameLoop() {
 
   requestAnimationFrame(loop);
 }
+
 
 
 
