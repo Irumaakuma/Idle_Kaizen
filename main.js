@@ -459,7 +459,7 @@ window.addEventListener("DOMContentLoaded", () => {
 function startGame() {
   console.log("🚀 Lancement du jeu avec currentUserId =", currentUserId);
   updateUI();
-
+  startRealTimeEventLoop(); // 🔁 lancement du système d'événements IRL
   setTimeout(() => {
     if (typeof player !== "undefined") {
       setInterval(updateGameLoop, 1000 / updateSpeed);

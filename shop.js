@@ -5,7 +5,7 @@ class ShopItem {
     this.description = description;
     this.category = category;
     this.costPerDay = costPerDay;
-    this.effect = effect; // doit retourner une fonction inverse
+    this.effect = effect;
     this.removeEffect = null;
     this.unlockCondition = unlockCondition;
     this.unlocked = false;
@@ -20,13 +20,13 @@ class ShopItem {
       }
       this.isActive = true;
       if (typeof this.effect === "function") {
-        this.removeEffect = this.effect(); // stocke fonction d’annulation
+        this.removeEffect = this.effect();
       }
       showToast(`✅ ${this.name} activé !`);
     } else {
       this.isActive = false;
       if (typeof this.removeEffect === "function") {
-        this.removeEffect(); // retire l’effet
+        this.removeEffect();
       }
       showToast(`🚫 ${this.name} désactivé.`);
     }
@@ -66,7 +66,7 @@ shopItems.push(new ShopItem({
   unlockCondition: () => !player.hasLogPose
 }));
 
-// 📚 Boosts de compétences fondamentales (par stat)
+// 📚 Boosts de compétences fondamentales
 const baseSkills = [
   { id: "force", label: "Force" },
   { id: "agilite", label: "Agilité" },
@@ -102,10 +102,27 @@ function getTotalShopCost() {
   return shopItems.filter(i => i.isActive).reduce((sum, i) => sum + i.costPerDay, 0);
 }
 
-// 🖼️ Rendu de la boutique
+// 🖼️ Affichage de la boutique
 function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
+
+  // 🧭 Affichage de l’événement actif (Log Pose)
+  if (player.hasLogPose && player.dailyBonus?.duration > 0) {
+    const remaining = player.dailyBonus.duration * 10; // 10s par tick
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    const label = player.dailyBonus.type === "positive" ? "🌟 Bonus" : "⚠️ Malus";
+    const color = player.dailyBonus.type === "positive" ? "#4caf50" : "#e53935";
+
+    container.innerHTML += `
+      <div style="padding: 10px; background: #111; color: ${color}; border-radius: 8px; margin-bottom: 10px;">
+        <strong>${label} en cours</strong><br>
+        ${player.dailyBonus.effect}<br>
+        ⏳ Temps restant : ${minutes}m ${seconds.toString().padStart(2, "0")}s
+      </div>
+    `;
+  }
 
   const grouped = {
     bateau: "Bateaux (Bonheur)",
@@ -157,7 +174,7 @@ function toggleShopItem(id) {
   updateUI();
 }
 
-// 🔁 Consommation quotidienne
+// 🔁 Coût journalier
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -175,7 +192,7 @@ function manageShopItems() {
   });
 }
 
-// 🌐 Exposition
+// 🌍 Exposition
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;

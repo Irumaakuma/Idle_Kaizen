@@ -224,44 +224,46 @@ function checkJobEvolution() {
   
 
   // 🎲 Système complet d’événements aléatoires
-const dailyEvents = {
-  positive: [
-    { message: "📦 Un coffre de ravitaillement t’apporte +500 berries", effect: () => player.berries += 500 },
-    { message: "⚙️ Tes outils sont affûtés : jobs -20% durée", effect: () => player.dailyModifiers.interval *= 0.8 },
-    { message: "📚 Tu découvres une technique : +1 niveau aléatoire", effect: () => {
-      const skills = Object.values(player.skills).filter(s => s.unlocked);
-      if (skills.length) skills[Math.floor(Math.random() * skills.length)].level++;
-    }},
-    { message: "🧭 Navigation idéale : +15% revenus", effect: () => player.dailyModifiers.income *= 1.15 },
-    { message: "⚒️ Entraînement optimisé : +10% XP passive", effect: () => player.dailyModifiers.xp *= 1.1 },
-    { message: "🏗️ Jobs en chaîne boostés", effect: () => player.dailyModifiers.interval *= 0.85 },
-    { message: "🛳️ Navigation rapide : vitesse +15%", effect: () => player.dailyModifiers.interval *= 0.85 },
-    { message: "🧰 Artisanat efficace : -20% prix boutique", effect: () => player.dailyModifiers.price *= 0.8 },
-    { message: "📖 Savoir tactique : +5 intelligence", effect: () => player.skills.intelligence.level += 5 },
-    { message: "💪 Tu es en forme : +5 force", effect: () => player.skills.force.level += 5 },
-    { message: "🛡️ Tu ressens une aura de protection...", effect: () => player._haki_armement_trigger = true },
-    { message: "👁️ Tu entends des voix invisibles...", effect: () => player._haki_observation_trigger = true },
-    { message: "👑 Un éclair traverse ton esprit...", effect: () => player._haki_roi_trigger = true },
-
-  ],
-  negative: [
-    { message: "🌀 Tempête : +20% durée jobs", effect: () => player.dailyModifiers.interval *= 1.2 },
-    { message: "💰 Corruption : -25% revenus", effect: () => player.dailyModifiers.income *= 0.75 },
-    { message: "🧱 Chute : +15% intervalle jobs", effect: () => player.dailyModifiers.interval *= 1.15 },
-    { message: "🚧 Barrage administratif : jobs +20% durée", effect: () => player.dailyModifiers.interval *= 1.2 },
-    { message: "📉 Perte de mémoire : -1 niveau random", effect: () => {
-      const skills = Object.values(player.skills).filter(s => s.level > 1);
-      if (skills.length) skills[Math.floor(Math.random() * skills.length)].level--;
-    }},
-    { message: "🔩 Panne technique : -15% revenus", effect: () => player.dailyModifiers.income *= 0.85 },
-    { message: "😵 Fatigue mentale : XP -10%", effect: () => player.dailyModifiers.xp *= 0.9 },
-    { message: "📦 Stock abîmé : +50% prix boutique", effect: () => player.dailyModifiers.price *= 1.5 },
-    { message: "💥 Retard général : +30% quêtes", effect: () => player.dailyModifiers.interval *= 1.3 },
-    { message: "⚒️ Fatigue extrême : vitesse -15%", effect: () => player.dailyModifiers.interval *= 1.15 }
-  ]
-};
-
+  const dailyEvents = {
+    positive: [
+      { message: "📦 Un coffre de ravitaillement t’apporte +500 berries", effect: () => player.berries += 500, givesImmediateBonus: true },
+      { message: "⚙️ Tes outils sont affûtés : jobs -20% durée", effect: () => player.dailyModifiers.interval *= 0.8 },
+      { message: "📚 Tu découvres une technique : +1 niveau aléatoire", effect: () => {
+        const skills = Object.values(player.skills).filter(s => s.unlocked);
+        if (skills.length) skills[Math.floor(Math.random() * skills.length)].level++;
+      }, givesImmediateBonus: true },
+      { message: "🧭 Navigation idéale : +15% revenus", effect: () => player.dailyModifiers.income *= 1.15 },
+      { message: "⚒️ Entraînement optimisé : +10% XP passive", effect: () => player.dailyModifiers.xp *= 1.1 },
+      { message: "🏗️ Jobs en chaîne boostés", effect: () => player.dailyModifiers.interval *= 0.85 },
+      { message: "🛳️ Navigation rapide : vitesse +15%", effect: () => player.dailyModifiers.interval *= 0.85 },
+      { message: "🧰 Artisanat efficace : -20% prix boutique", effect: () => player.dailyModifiers.price *= 0.8 },
+      { message: "📖 Savoir tactique : +5 intelligence", effect: () => player.skills.intelligence.level += 5, givesImmediateBonus: true },
+      { message: "💪 Tu es en forme : +5 force", effect: () => player.skills.force.level += 5, givesImmediateBonus: true },
+      { message: "🛡️ Tu ressens une aura de protection...", effect: () => player._haki_armement_trigger = true, givesImmediateBonus: true },
+      { message: "👁️ Tu entends des voix invisibles...", effect: () => player._haki_observation_trigger = true, givesImmediateBonus: true },
+      { message: "👑 Un éclair traverse ton esprit...", effect: () => player._haki_roi_trigger = true, givesImmediateBonus: true },
+    ],
+    negative: [
+      { message: "🌀 Tempête : +20% durée jobs", effect: () => player.dailyModifiers.interval *= 1.2 },
+      { message: "💰 Corruption : -25% revenus", effect: () => player.dailyModifiers.income *= 0.75 },
+      { message: "🧱 Chute : +15% intervalle jobs", effect: () => player.dailyModifiers.interval *= 1.15 },
+      { message: "🚧 Barrage administratif : jobs +20% durée", effect: () => player.dailyModifiers.interval *= 1.2 },
+      { message: "📉 Perte de mémoire : -1 niveau random", effect: () => {
+        const skills = Object.values(player.skills).filter(s => s.level > 1);
+        if (skills.length) skills[Math.floor(Math.random() * skills.length)].level--;
+      }, givesImmediateBonus: true },
+      { message: "🔩 Panne technique : -15% revenus", effect: () => player.dailyModifiers.income *= 0.85 },
+      { message: "😵 Fatigue mentale : XP -10%", effect: () => player.dailyModifiers.xp *= 0.9 },
+      { message: "📦 Stock abîmé : +50% prix boutique", effect: () => player.dailyModifiers.price *= 1.5 },
+      { message: "💥 Retard général : +30% quêtes", effect: () => player.dailyModifiers.interval *= 1.3 },
+      { message: "⚒️ Fatigue extrême : vitesse -15%", effect: () => player.dailyModifiers.interval *= 1.15 }
+    ]
+  };
+  
 function triggerDailyEvent() {
+  // ⛔️ Si un événement est encore actif, ne rien faire
+  if (player.dailyBonus?.duration > 0) return;
+
   player.dailyModifiers = { income: 1, interval: 1, price: 1, xp: 1 };
   player.canUnlockHakiToday = false;
 
@@ -272,18 +274,28 @@ function triggerDailyEvent() {
   const roll = Math.random();
 
   if (roll < boostedChance) {
-    const event = dailyEvents.positive[Math.floor(Math.random() * dailyEvents.positive.length)];
-    player.dailyBonus = { type: "positive", duration: 25 + eventDurationBonus };
-    player.canUnlockHakiToday = true;
-    showToast("🌟 " + event.message);
-    event.effect();
-  } else if (roll > 0.85) {
-    const event = dailyEvents.negative[Math.floor(Math.random() * dailyEvents.negative.length)];
-    player.dailyBonus = { type: "negative", duration: 25 + eventDurationBonus };
-    showToast("⚠️ " + event.message);
+    const isPositive = Math.random() < 0.5;
+    const pool = isPositive ? dailyEvents.positive : dailyEvents.negative;
+    const event = pool[Math.floor(Math.random() * pool.length)];
+
+    const isInstant = !!event.givesImmediateBonus;
+    const duration = isInstant ? 1 : 30 + eventDurationBonus;
+
+    player.dailyBonus = {
+      type: isPositive ? "positive" : "negative",
+      duration,
+      effect: event.message,
+      startTime: Date.now()
+    };
+
+    showToast(`${isPositive ? "🌟" : "⚠️"} ${event.message}`);
     event.effect();
 
-    if (Math.random() < 0.001) {
+    if (isPositive) {
+      player.canUnlockHakiToday = true;
+    }
+
+    if (!isPositive && Math.random() < 0.001) {
       player.dead = true;
       showToast("☠️ Tu as été victime d'un événement fatal !");
     }
@@ -293,14 +305,33 @@ function triggerDailyEvent() {
 }
 
 
-// ⏱️ À appeler dans ta boucle journalière
-if (typeof player.lastDayChecked === "undefined" || player.lastDayChecked !== Math.floor(player.day)) {
-  player.lastDayChecked = Math.floor(player.day);
-  triggerDailyEvent();
+
+function startRealTimeEventLoop() {
+  setInterval(() => {
+    if (player.dead) return;
+
+    // ⏳ Réduire la durée de l’effet en cours
+    if (player.dailyBonus?.duration > 0) {
+      player.dailyBonus.duration--;
+      if (player.dailyBonus.duration <= 0) {
+        showToast("⏳ L'effet de l'événement s'est dissipé.");
+        player.dailyBonus = null;
+        player.dailyModifiers = { income: 1, interval: 1, price: 1, xp: 1 };
+      }
+      return;
+    }
+
+    // 🎲 Déclenche un nouvel événement s’il n’y en a pas
+    triggerDailyEvent();
+
+  }, 10000); // toutes les 10s IRL
 }
+
+
   
   
   window.updateMaxAge = updateMaxAge;
   window.updateGameLoop = updateGameLoop;
   window.triggerRebirth = triggerRebirth;
   window.checkJobEvolution = checkJobEvolution;
+  window.startRealTimeEventLoop = startRealTimeEventLoop;
