@@ -7,8 +7,8 @@ function renderSidebar() {
   const net = revenuExact - totalCost;
 
   // ✅ Affichage revenu & dépenses
-  document.getElementById("income-display").textContent = `+${revenuExact.toFixed(2)}`;
-  document.getElementById("expense-display").textContent = `-${totalCost.toFixed(2)}`;
+  document.getElementById("income-display").textContent = `${revenuExact.toFixed(2)}`;
+  document.getElementById("expense-display").textContent = `${totalCost.toFixed(2)}`;
 
   // ✅ Solde net par jour
   const sidebarBlock = document.querySelector(".sidebar-block:nth-child(2)");
