@@ -1,47 +1,32 @@
 (() => {
-    console.log("%c🚫 Anti-triche activé", "color: red; font-size: 16px;");
+    console.log("%c🛡️ Anti-triche actif", "color: lime; font-size: 16px;");
   
-    // 🔒 Protéger les fonctions critiques
-    Object.defineProperty(window, "gainBerries", {
-      configurable: false,
-      writable: false,
-      value: () => alert("❌ gainBerries bloqué.")
-    });
+    // Utilitaire de protection via Proxy
+    function protectFunction(fnName, originalFn) {
+      if (typeof originalFn !== "function") return;
   
-    Object.defineProperty(window, "gainXP", {
-      configurable: false,
-      writable: false,
-      value: () => alert("❌ gainXP bloqué.")
-    });
+      window[fnName] = new Proxy(originalFn, {
+        apply(target, thisArg, argumentsList) {
+          const err = new Error();
+          const stack = err.stack || "";
+          const isFromConsole = stack.includes("at <anonymous>") || stack.includes("VM");
   
-    Object.defineProperty(window, "challengePlayer", {
-      configurable: false,
-      writable: false,
-      value: () => alert("❌ PvP manuel interdit.")
-    });
+          if (isFromConsole) {
+            alert(`❌ ${fnName} bloqué depuis la console.`);
+            return;
+          }
   
-    // 🔐 Empêche l’ajout d’autres propriétés à jobs et skills (mais garde les actuelles fonctionnelles)
-    Object.seal(player.jobs);
-    Object.seal(player.skills);
-  
-    // 🛡️ Détection console DevTools
-    let devToolsOpen = false;
-  
-    setInterval(() => {
-      const t0 = performance.now();
-      debugger; // provoque un arrêt si la console est ouverte
-      const t1 = performance.now();
-  
-      if (t1 - t0 > 100) {
-        if (!devToolsOpen) {
-          devToolsOpen = true;
-          alert("🚫 Console détectée. Le jeu va redémarrer.");
-          location.reload();
+          return Reflect.apply(target, thisArg, argumentsList);
         }
-      }
-    }, 1000);
+      });
+    }
   
-    // 🔐 Désactivation des raccourcis DevTools
+    // 🔒 Appliquer la protection sur les fonctions critiques
+    protectFunction("gainBerries", window.gainBerries);
+    protectFunction("gainXP", window.gainXP);
+    protectFunction("challengePlayer", window.challengePlayer);
+  
+    // 🔒 Désactiver les raccourcis DevTools
     document.addEventListener("keydown", function (e) {
       if (
         e.key === "F12" ||
@@ -55,5 +40,20 @@
   
     // ❌ Bloquer clic droit
     document.addEventListener("contextmenu", e => e.preventDefault());
+  
+    // 🔎 Détecter ouverture console
+    let devToolsOpen = false;
+    setInterval(() => {
+      const t0 = performance.now();
+      debugger;
+      const t1 = performance.now();
+      if (t1 - t0 > 100) {
+        if (!devToolsOpen) {
+          devToolsOpen = true;
+          alert("🚫 Console détectée. Le jeu va redémarrer.");
+          location.reload();
+        }
+      }
+    }, 1000);
   })();
   
