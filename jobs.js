@@ -46,7 +46,7 @@ class Job {
   }
 
   gainXp() {
-    const gain = applySpeed(this.getXpGain()) / 10;
+    const gain = applySpeed(this.getXpGain()) / 25;
     this.xp += gain;
     if (this.xp >= this.getMaxXp()) {
       let excess = this.xp - this.getMaxXp();
@@ -119,7 +119,7 @@ const pirateNames = [
 
 for (let i = 0; i < pirateNames.length; i++) {
   const { reward, duration } = applyFactionBonusesToQuest(
-    0.25 + i * 0.06,
+    0.025 + i * 0.06,
     Math.max(800, 3800 - i * 32)
   );
 
@@ -152,7 +152,7 @@ const marineNames = [
 
 for (let i = 0; i < marineNames.length; i++) {
   const { reward, duration } = applyFactionBonusesToQuest(
-    0.25 + i * 0.06,
+    0.025 + i * 0.06,
     Math.max(800, 3800 - i * 32)
   );
 
@@ -186,7 +186,7 @@ for (let i = 0; i < farmNames.length; i++) {
   jobs.push(new Job({
     id: `farm_${i + 1}`,
     name: farmNames[i],
-    baseIncome: 0.1 + i * 0.05,
+    baseIncome: 0.01 + i * 0.05,
     interval: Math.max(1000, 4000 - i * 30),
     requiredSkill: "vigueur",
     requiredLevel: i === 0 ? 1 : i * 3,
@@ -212,7 +212,7 @@ for (let i = 0; i < combatNames.length; i++) {
   jobs.push(new Job({
     id: `combat_${i + 1}`,
     name: combatNames[i],
-    baseIncome: 0.2 + i * 0.06,
+    baseIncome: 0.02 + i * 0.06,
     interval: Math.max(1000, 4000 - i * 35),
     requiredSkill: "force",
     requiredLevel: i * 3 + 1,
