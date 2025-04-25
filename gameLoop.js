@@ -204,6 +204,17 @@ function checkJobEvolution() {
       btn.style.opacity = 1;
       btn.style.pointerEvents = "auto";
     });
+
+    // ❌ Désactiver tous les items shop actifs
+    shopItems.forEach(item => {
+      if (item.isActive) {
+      item.isActive = false;
+      if (typeof item.removeEffect === "function") {
+        item.removeEffect();
+      }
+    }
+    });
+
   
     // ✅ Masquer la section Rebirth
     document.getElementById("rebirth-section").style.display = "none";
