@@ -96,6 +96,21 @@ function getSaveData() {
 
 
 async function savePlayerData(userId) {
+  const skillsData = {};
+  for (let id in player.skills) {
+    const s = player.skills[id];
+    skillsData[id] = {
+      id: s.id,
+      name: s.name,
+      level: s.level,
+      xp: s.xp,
+      baseXpGain: s.baseXpGain,
+      baseEffect: s.baseEffect,
+      group: s.group,
+      unlocked: s.unlocked
+    };
+  }
+
   const data = {
     name: player.name,
     berries: player.berries,
@@ -104,18 +119,7 @@ async function savePlayerData(userId) {
     currentJobId: player.currentJobId,
     currentSkillId: player.currentSkillId,
     jobs: player.jobs,
-    skills: Object.fromEntries(Object.entries(player.skills).map(([id, s]) => ({
-      [id]: {
-        id: s.id,
-        name: s.name,
-        level: s.level,
-        xp: s.xp,
-        baseXpGain: s.baseXpGain,
-        baseEffect: s.baseEffect,
-        group: s.group,
-        unlocked: s.unlocked
-      }
-    }))).flatMap(obj => Object.entries(obj)),
+    skills: skillsData,
     questsCompleted: player.questsCompleted,
     happiness: player.happiness,
     hasLogPose: player.hasLogPose,
@@ -132,8 +136,6 @@ async function savePlayerData(userId) {
     pvpStats: player.pvpStats,
     _haki_armement_trigger: player._haki_armement_trigger,
     _haki_observation_trigger: player._haki_observation_trigger,
-
-    // ✅ Nouveau : shop items actifs
     activeShopItems: shopItems.filter(i => i.isActive).map(i => i.id)
   };
 
@@ -157,6 +159,7 @@ async function savePlayerData(userId) {
     console.error("❌ Erreur fetch :", err);
   }
 }
+
 
 
 async function loadPlayerData(userId) {
