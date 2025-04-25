@@ -151,12 +151,19 @@ async function savePlayerData(userId) {
 
     if (res.ok) {
       const now = new Date().toLocaleTimeString();
-      document.getElementById("last-save").textContent = `💾 Sauvegarde : ${now}`;
+      const saveDisplay = document.getElementById("last-save");
+      if (saveDisplay) {
+        saveDisplay.textContent = `💾 Sauvegarde : ${now}`;
+      }
+      console.log("✅ Données sauvegardées avec succès !");
     } else {
+      const errText = await res.text();
+      console.warn("❌ Sauvegarde échouée :", errText);
       showToast("❌ Erreur lors de la sauvegarde !");
     }
   } catch (err) {
-    console.error("❌ Erreur fetch :", err);
+    console.error("❌ Erreur réseau lors de la sauvegarde :", err);
+    showToast("❌ Échec de la sauvegarde !");
   }
 }
 
@@ -165,45 +172,48 @@ async function savePlayerData(userId) {
 async function loadPlayerData(userId) {
   try {
     const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
-      headers: {
-        Authorization: userId
-      }
+      headers: { Authorization: userId }
     });
 
     if (!res.ok) {
-      console.warn("❌ Données introuvables pour cet utilisateur.");
-      return;
+      console.warn("❌ Aucune donnée trouvée pour cet utilisateur.");
+      return startGame(); // continue quand même le jeu vide
     }
 
     const data = await res.json();
+    if (!data || typeof data !== "object") {
+      console.warn("⚠️ Données malformées");
+      return startGame();
+    }
 
     Object.assign(player, {
       name: data.name || "Joueur",
       berries: data.berries || 0,
       xp: data.xp || 0,
       level: data.level || 1,
+      job: data.job || "Civil",
       currentJobId: data.currentJobId || null,
       currentSkillId: data.currentSkillId || null,
-      jobs: data.jobs || {},
-      questsCompleted: data.questsCompleted || [],
-      happiness: data.happiness || 1,
-      hasLogPose: data.hasLogPose || false,
       day: data.day || 1,
       age: data.age || 0,
       maxAge: data.maxAge || 30,
       dead: data.dead || false,
-      faction: data.faction || "Civil",
+      hasLogPose: data.hasLogPose || false,
+      happiness: data.happiness || 1,
       alignmentScore: data.alignmentScore || 0,
       rebirthCount: data.rebirthCount || 0,
       rebirthBonuses: data.rebirthBonuses || {},
       dailyBonus: data.dailyBonus || null,
+      faction: data.faction || "Civil",
       heritage: data.heritage || {},
       pvpStats: data.pvpStats || {},
-      _haki_armement_trigger: data._haki_armement_trigger || false,
-      _haki_observation_trigger: data._haki_observation_trigger || false
+      queuedIncome: data.queuedIncome || 0,
+      queuedSkillXp: data.queuedSkillXp || 0,
+      questsCompleted: data.questsCompleted || [],
+      jobs: data.jobs || {}
     });
 
-    // 🔄 Reconstituer les compétences (skills)
+    // ✅ Restaurer les skills
     player.skills = {};
     for (let id in data.skills) {
       const s = data.skills[id];
@@ -219,20 +229,23 @@ async function loadPlayerData(userId) {
       player.skills[id].xp = s.xp;
     }
 
-    // 🛍️ Réactiver les items de boutique actifs
-    shopItems.forEach(item => {
-      if (data.activeShopItems?.includes(item.id)) {
-        item.toggleActive(); // réactive (avec effet)
-      }
-    });
+    // ✅ Réactiver les shop items actifs
+    if (Array.isArray(data.activeShopItems)) {
+      shopItems.forEach(item => {
+        if (data.activeShopItems.includes(item.id)) {
+          item.toggleActive?.();
+        }
+      });
+    }
 
-    console.log("✅ Données chargées :", player);
-    updateUI();
-
+    console.log("✅ Données chargées !");
+    startGame();
   } catch (err) {
     console.error("❌ Erreur de chargement :", err);
+    startGame();
   }
 }
+
 
 
 
