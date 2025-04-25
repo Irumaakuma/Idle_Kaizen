@@ -95,76 +95,148 @@ function getSaveData() {
 
 
 
-function savePlayerData(userId) {
-  fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": userId  // 🟢 C'EST OBLIGATOIRE
-    },
-    body: JSON.stringify(getSaveData())
-  }).then(() => {
-    const now = new Date();
-    const time = now.toLocaleTimeString();
-    document.getElementById("last-save").textContent = `💾 Sauvegarde effectuée à ${time}`;
-    showToast("✅ Données sauvegardées");
-  });
+async function savePlayerData(userId) {
+  const data = {
+    name: player.name,
+    berries: player.berries,
+    xp: player.xp,
+    level: player.level,
+    currentJobId: player.currentJobId,
+    currentSkillId: player.currentSkillId,
+    jobs: player.jobs,
+    skills: Object.fromEntries(Object.entries(player.skills).map(([id, s]) => ({
+      [id]: {
+        id: s.id,
+        name: s.name,
+        level: s.level,
+        xp: s.xp,
+        baseXpGain: s.baseXpGain,
+        baseEffect: s.baseEffect,
+        group: s.group,
+        unlocked: s.unlocked
+      }
+    }))).flatMap(obj => Object.entries(obj)),
+    questsCompleted: player.questsCompleted,
+    happiness: player.happiness,
+    hasLogPose: player.hasLogPose,
+    day: player.day,
+    age: player.age,
+    maxAge: player.maxAge,
+    dead: player.dead,
+    faction: player.faction,
+    alignmentScore: player.alignmentScore,
+    rebirthCount: player.rebirthCount,
+    rebirthBonuses: player.rebirthBonuses,
+    dailyBonus: player.dailyBonus,
+    heritage: player.heritage,
+    pvpStats: player.pvpStats,
+    _haki_armement_trigger: player._haki_armement_trigger,
+    _haki_observation_trigger: player._haki_observation_trigger,
+
+    // ✅ Nouveau : shop items actifs
+    activeShopItems: shopItems.filter(i => i.isActive).map(i => i.id)
+  };
+
+  try {
+    const res = await fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": userId
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      const now = new Date().toLocaleTimeString();
+      document.getElementById("last-save").textContent = `💾 Sauvegarde : ${now}`;
+    } else {
+      showToast("❌ Erreur lors de la sauvegarde !");
+    }
+  } catch (err) {
+    console.error("❌ Erreur fetch :", err);
+  }
 }
 
 
 async function loadPlayerData(userId) {
-  const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
-    headers: { "Authorization": userId }
-  });
-
-  const data = await res.json();
-
-  if (data) {
-    Object.assign(player, data);
-
-    if (data.faction) {
-      player.faction = data.faction; // ✅ restauration manuelle si besoin
-    }
-    if (data.alignmentScore !== undefined) {
-      player.alignmentScore = data.alignmentScore;
-    }
-    
-    if (data.queuedIncome !== undefined) {
-      player.queuedIncome = data.queuedIncome;
-    }
-    
-    if (data.queuedSkillXp !== undefined) {
-      player.queuedSkillXp = data.queuedSkillXp;
-    }
-    
-    const rebuiltSkills = {};
-    for (let id in data.skills) {
-      const s = data.skills[id];
-      rebuiltSkills[id] = new Skill({
-        id: s.id,
-        name: s.name,
-        baseXpGain: s.baseXpGain,
-        baseEffect: s.baseEffect,
-        group: s.group
-      });
-      rebuiltSkills[id].level = s.level;
-      rebuiltSkills[id].xp = s.xp;
-    }
-
-    player.skills = rebuiltSkills;
-
-    jobs.forEach(job => {
-      const saved = data.jobs?.[job.id];
-      if (saved) {
-        job.level = saved.level || 1;
-        job.xp = saved.xp || 0;
+  try {
+    const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
+      headers: {
+        "Authorization": userId
       }
     });
 
+    if (!res.ok) throw new Error("Données non trouvées");
+
+    const data = await res.json();
+
+    player.name = data.name || "Inconnu";
+    player.berries = data.berries || 0;
+    player.xp = data.xp || 0;
+    player.level = data.level || 1;
+    player.currentJobId = data.currentJobId || null;
+    player.currentSkillId = data.currentSkillId || null;
+    player.jobs = data.jobs || {};
+    player.skills = { ...window.defaultSkills };
+
+    // 🔄 Appliquer les stats sauvegardées aux skills
+    if (data.skills) {
+      for (let id in data.skills) {
+        const saved = data.skills[id];
+        if (player.skills[id]) {
+          Object.assign(player.skills[id], {
+            level: saved.level || 1,
+            xp: saved.xp || 0,
+            baseXpGain: saved.baseXpGain || player.skills[id].baseXpGain,
+            baseEffect: saved.baseEffect || player.skills[id].baseEffect,
+            unlocked: saved.unlocked ?? true
+          });
+        }
+      }
+    }
+
+    player.questsCompleted = data.questsCompleted || [];
+    player.happiness = data.happiness || 1.0;
+    player.hasLogPose = data.hasLogPose || false;
+    player.day = data.day || 1;
+    player.age = data.age || 0;
+    player.maxAge = data.maxAge || 30;
+    player.dead = data.dead || false;
+    player.faction = data.faction || "Civil";
+    player.alignmentScore = data.alignmentScore || 0;
+    player.rebirthCount = data.rebirthCount || 0;
+    player.rebirthBonuses = data.rebirthBonuses || {};
+    player.dailyBonus = data.dailyBonus || null;
+    player.heritage = data.heritage || {};
+    player.pvpStats = data.pvpStats || {};
+    player._haki_armement_trigger = data._haki_armement_trigger ?? true;
+    player._haki_observation_trigger = data._haki_observation_trigger ?? true;
+
+    // ✅ Restaurer les items actifs
+    if (data.activeShopItems?.length) {
+      setTimeout(() => {
+        data.activeShopItems.forEach(id => {
+          const item = shopItems.find(i => i.id === id);
+          if (item && !item.isActive) {
+            item.isActive = true;
+            if (typeof item.effect === "function") {
+              item.removeEffect = item.effect(); // Appliquer et stocker l'inverse
+            }
+          }
+        });
+        updateUI();
+      }, 200);
+    }
+
     updateUI();
-    togglePvpButton();
+    showToast("✅ Données chargées !");
+  } catch (err) {
+    console.warn("⚠️ Aucune sauvegarde trouvée. Nouvelle partie.");
+    updateUI();
   }
 }
+
 
 
 function forceSave() {

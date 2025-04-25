@@ -5,7 +5,8 @@ class ShopItem {
     this.description = description;
     this.category = category;
     this.costPerDay = costPerDay;
-    this.effect = effect;
+    this.effect = effect; // doit retourner une fonction inverse
+    this.removeEffect = null;
     this.unlockCondition = unlockCondition;
     this.unlocked = false;
     this.isActive = false;
@@ -18,10 +19,15 @@ class ShopItem {
         return;
       }
       this.isActive = true;
-      this.effect();
+      if (typeof this.effect === "function") {
+        this.removeEffect = this.effect(); // stocke fonction d’annulation
+      }
       showToast(`✅ ${this.name} activé !`);
     } else {
       this.isActive = false;
+      if (typeof this.removeEffect === "function") {
+        this.removeEffect(); // retire l’effet
+      }
       showToast(`🚫 ${this.name} désactivé.`);
     }
   }
@@ -29,15 +35,19 @@ class ShopItem {
 
 const shopItems = [];
 
-// 🛶 Bateaux (bonus bonheur)
+// 🛶 Bateaux (bonheur)
 for (let i = 1; i <= 10; i++) {
+  const value = 0.05 * i;
   shopItems.push(new ShopItem({
     id: `bateau_${i}`,
     name: `Bateau ${i}`,
     description: `Un bateau de niveau ${i} qui augmente le bonheur.`,
     category: "bateau",
     costPerDay: i * 2,
-    effect: () => player.happiness += 0.05 * i,
+    effect: () => {
+      player.happiness += value;
+      return () => player.happiness -= value;
+    },
     unlockCondition: () => player.level >= i
   }));
 }
@@ -49,11 +59,14 @@ shopItems.push(new ShopItem({
   description: "Affiche la durée des événements et les chances d'apparition.",
   category: "special",
   costPerDay: 0,
-  effect: () => { player.hasLogPose = true; },
+  effect: () => {
+    player.hasLogPose = true;
+    return () => { player.hasLogPose = false; };
+  },
   unlockCondition: () => !player.hasLogPose
 }));
 
-// ⚔️ Boosts de compétences par stat, effet exponentiel
+// 📚 Boosts de compétences fondamentales (par stat)
 const baseSkills = [
   { id: "force", label: "Force" },
   { id: "agilite", label: "Agilité" },
@@ -66,7 +79,7 @@ const baseSkills = [
 
 baseSkills.forEach(({ id, label }) => {
   for (let i = 1; i <= 10; i++) {
-    const boostValue = 0.005 * Math.pow(2, i - 1); // double à chaque boost
+    const boostValue = 0.005 * Math.pow(2, i - 1);
     const cost = i;
 
     shopItems.push(new ShopItem({
@@ -75,18 +88,21 @@ baseSkills.forEach(({ id, label }) => {
       description: `Boost ${label.toLowerCase()} de +${boostValue.toFixed(3)} par tick.`,
       category: id,
       costPerDay: cost,
-      effect: () => player.skills[id].baseXpGain += boostValue,
-      unlockCondition: () => player.skills[id]?.level >= i * 10 // MASQUÉ si non débloqué
+      effect: () => {
+        player.skills[id].baseXpGain += boostValue;
+        return () => player.skills[id].baseXpGain -= boostValue;
+      },
+      unlockCondition: () => player.skills[id]?.level >= i * 10
     }));
   }
 });
 
-// 🔢 Calcul total coût actif
+// 💰 Total coût actif
 function getTotalShopCost() {
   return shopItems.filter(i => i.isActive).reduce((sum, i) => sum + i.costPerDay, 0);
 }
 
-// 🖼️ Affichage boutique
+// 🖼️ Rendu de la boutique
 function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
@@ -134,14 +150,14 @@ function renderShop() {
   }
 }
 
-// 🧩 Activation / désactivation d’un item
+// 📦 Interaction
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
-// 💸 Débit automatique journalier (appelé dans updateGameLoop)
+// 🔁 Consommation quotidienne
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -149,20 +165,17 @@ function manageShopItems() {
     const cost = item.costPerDay;
     if (player.berries < cost) {
       item.isActive = false;
+      if (typeof item.removeEffect === "function") {
+        item.removeEffect();
+      }
       showToast(`💸 ${item.name} désactivé automatiquement (plus de berries)`);
     } else {
       player.berries -= cost;
-
-      if (!isFinite(player.berries) || player.berries < -10000) {
-        item.isActive = false;
-        player.berries = 0;
-        console.warn(`❌ Problème détecté avec ${item.name}, désactivation forcée.`);
-      }
     }
   });
 }
 
-// 🌐 Exposer
+// 🌐 Exposition
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;
