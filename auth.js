@@ -166,79 +166,74 @@ async function loadPlayerData(userId) {
   try {
     const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
       headers: {
-        "Authorization": userId
+        Authorization: userId
       }
     });
 
-    if (!res.ok) throw new Error("Données non trouvées");
+    if (!res.ok) {
+      console.warn("❌ Données introuvables pour cet utilisateur.");
+      return;
+    }
 
     const data = await res.json();
 
-    player.name = data.name || "Inconnu";
-    player.berries = data.berries || 0;
-    player.xp = data.xp || 0;
-    player.level = data.level || 1;
-    player.currentJobId = data.currentJobId || null;
-    player.currentSkillId = data.currentSkillId || null;
-    player.jobs = data.jobs || {};
-    player.skills = { ...window.defaultSkills };
+    Object.assign(player, {
+      name: data.name || "Joueur",
+      berries: data.berries || 0,
+      xp: data.xp || 0,
+      level: data.level || 1,
+      currentJobId: data.currentJobId || null,
+      currentSkillId: data.currentSkillId || null,
+      jobs: data.jobs || {},
+      questsCompleted: data.questsCompleted || [],
+      happiness: data.happiness || 1,
+      hasLogPose: data.hasLogPose || false,
+      day: data.day || 1,
+      age: data.age || 0,
+      maxAge: data.maxAge || 30,
+      dead: data.dead || false,
+      faction: data.faction || "Civil",
+      alignmentScore: data.alignmentScore || 0,
+      rebirthCount: data.rebirthCount || 0,
+      rebirthBonuses: data.rebirthBonuses || {},
+      dailyBonus: data.dailyBonus || null,
+      heritage: data.heritage || {},
+      pvpStats: data.pvpStats || {},
+      _haki_armement_trigger: data._haki_armement_trigger || false,
+      _haki_observation_trigger: data._haki_observation_trigger || false
+    });
 
-    // 🔄 Appliquer les stats sauvegardées aux skills
-    if (data.skills) {
-      for (let id in data.skills) {
-        const saved = data.skills[id];
-        if (player.skills[id]) {
-          Object.assign(player.skills[id], {
-            level: saved.level || 1,
-            xp: saved.xp || 0,
-            baseXpGain: saved.baseXpGain || player.skills[id].baseXpGain,
-            baseEffect: saved.baseEffect || player.skills[id].baseEffect,
-            unlocked: saved.unlocked ?? true
-          });
-        }
+    // 🔄 Reconstituer les compétences (skills)
+    player.skills = {};
+    for (let id in data.skills) {
+      const s = data.skills[id];
+      player.skills[id] = new Skill({
+        id: s.id,
+        name: s.name,
+        baseEffect: s.baseEffect,
+        baseXpGain: s.baseXpGain,
+        group: s.group,
+        unlocked: s.unlocked
+      });
+      player.skills[id].level = s.level;
+      player.skills[id].xp = s.xp;
+    }
+
+    // 🛍️ Réactiver les items de boutique actifs
+    shopItems.forEach(item => {
+      if (data.activeShopItems?.includes(item.id)) {
+        item.toggleActive(); // réactive (avec effet)
       }
-    }
+    });
 
-    player.questsCompleted = data.questsCompleted || [];
-    player.happiness = data.happiness || 1.0;
-    player.hasLogPose = data.hasLogPose || false;
-    player.day = data.day || 1;
-    player.age = data.age || 0;
-    player.maxAge = data.maxAge || 30;
-    player.dead = data.dead || false;
-    player.faction = data.faction || "Civil";
-    player.alignmentScore = data.alignmentScore || 0;
-    player.rebirthCount = data.rebirthCount || 0;
-    player.rebirthBonuses = data.rebirthBonuses || {};
-    player.dailyBonus = data.dailyBonus || null;
-    player.heritage = data.heritage || {};
-    player.pvpStats = data.pvpStats || {};
-    player._haki_armement_trigger = data._haki_armement_trigger ?? true;
-    player._haki_observation_trigger = data._haki_observation_trigger ?? true;
-
-    // ✅ Restaurer les items actifs
-    if (data.activeShopItems?.length) {
-      setTimeout(() => {
-        data.activeShopItems.forEach(id => {
-          const item = shopItems.find(i => i.id === id);
-          if (item && !item.isActive) {
-            item.isActive = true;
-            if (typeof item.effect === "function") {
-              item.removeEffect = item.effect(); // Appliquer et stocker l'inverse
-            }
-          }
-        });
-        updateUI();
-      }, 200);
-    }
-
+    console.log("✅ Données chargées :", player);
     updateUI();
-    showToast("✅ Données chargées !");
+
   } catch (err) {
-    console.warn("⚠️ Aucune sauvegarde trouvée. Nouvelle partie.");
-    updateUI();
+    console.error("❌ Erreur de chargement :", err);
   }
 }
+
 
 
 
