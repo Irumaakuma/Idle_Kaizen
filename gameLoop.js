@@ -131,25 +131,10 @@ function checkJobEvolution() {
   function triggerRebirth() {
     player.rebirth = (player.rebirth || 0) + 1;
   
-    // ✅ Appliquer les bonus même sans mort de vieillesse
-    if (!player.rebirthBonuses) player.rebirthBonuses = {};
-    let bonusHTML = "<ul style='margin-left: 10px;'>";
-    for (let id in player.skills) {
-      const skill = player.skills[id];
-      if (skill.group === "fondamentale") {
-        const bonus = Math.floor(skill.level / 10) * 0.1;
-        if (bonus > 0) {
-          player.rebirthBonuses[id] = (player.rebirthBonuses[id] || 0) + bonus;
-          bonusHTML += `<li><strong>${skill.name}</strong> : +${bonus.toFixed(1)} bonus Rebirth</li>`;
-        }
-      }
-    }
-    bonusHTML += "</ul>";
-    document.getElementById("rebirth-bonuses-list").innerHTML = bonusHTML;
-  
-    // 🔁 Réinitialisation du joueur
+    // ✅ Ne PAS recalculer les bonus ici (déjà faits à la mort)
     const savedBonuses = { ...player.rebirthBonuses };
   
+    // 🔁 Réinitialisation du joueur
     Object.assign(player, {
       berries: 0,
       xp: 0,
@@ -198,23 +183,22 @@ function checkJobEvolution() {
       });
     }
   
-    // ✅ Réactiver l’UI
+    // ❌ Désactiver tous les items shop actifs
+    shopItems.forEach(item => {
+      if (item.isActive) {
+        item.isActive = false;
+        if (typeof item.removeEffect === "function") {
+          item.removeEffect();
+        }
+      }
+    });
+  
+    // ✅ Réactiver les onglets de l'interface
     document.querySelectorAll("#tabs button").forEach(btn => {
       btn.disabled = false;
       btn.style.opacity = 1;
       btn.style.pointerEvents = "auto";
     });
-
-    // ❌ Désactiver tous les items shop actifs
-    shopItems.forEach(item => {
-      if (item.isActive) {
-      item.isActive = false;
-      if (typeof item.removeEffect === "function") {
-        item.removeEffect();
-      }
-    }
-    });
-
   
     // ✅ Masquer la section Rebirth
     document.getElementById("rebirth-section").style.display = "none";
@@ -227,6 +211,7 @@ function checkJobEvolution() {
     showToast("🔁 Nouvelle vie lancée ! Tes bonus sont actifs.");
     updateUI();
   }
+  
   
   
   

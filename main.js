@@ -218,6 +218,7 @@ async function simulateCombat(playerA, playerB) {
   };
 
   const statsB = {
+    id: playerB.discordId, // ✅ utilisé pour le kill distant
     name: nameB,
     hp: 10 + getStat(playerB, "vitalite") * 3,
     force: getStat(playerB, "force"),
@@ -247,6 +248,22 @@ async function simulateCombat(playerA, playerB) {
       await addLogLine(`🏆 Victoire de ${statsA.name}`, "#00b0ff");
       await addLogLine(`${statsA.name} PV restants : ${Math.max(0, statsA.hp).toFixed(2)} | ${statsB.name} PV restants : 0`, "#00b0ff");
       sendPvpNotification(statsA.name, statsB.name);
+
+      // ✅ Tuer l’adversaire à distance via API
+      if (statsB.id) {
+        fetch(`https://kaizen-backend-fkod.onrender.com/force-death/${statsB.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": statsB.id
+          }
+        }).then(() => {
+          console.log(`💀 ${statsB.name} a été tué à distance via l'API.`);
+        }).catch(err => {
+          console.warn("❌ Échec de l'appel à force-death :", err);
+        });
+      }
+
       return;
     }
 
@@ -268,9 +285,10 @@ async function simulateCombat(playerA, playerB) {
 
       if (statsA.name === currentUsername) {
         player.dead = true;
-        savePlayerData(currentUserId);
-        lockDeathMode();         // 🔒 Verrouille l’UI
-        updateUI();              // ✅ Affiche le bouton de Rebirth si besoin
+        lockDeathMode();                 // 🔒 Verrouille l'interface
+        updateUI();                      // 🔄 Affiche bouton Rebirth
+        savePlayerData(currentUserId);  // 💾 Sauvegarde propre
+        showToast("☠️ Tu es mort en PvP... Prépare-toi à renaître.");
       }
 
       return;
@@ -282,6 +300,7 @@ async function simulateCombat(playerA, playerB) {
 
   await nextTurn();
 }
+
 
 function lockDeathMode() {
   showToast("☠️ Tu es mort... Rebirth obligatoire.");
