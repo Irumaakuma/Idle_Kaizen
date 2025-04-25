@@ -29,7 +29,7 @@ class ShopItem {
 
 const shopItems = [];
 
-// Bateaux (bonheur)
+// 🛶 Bateaux (bonus bonheur)
 for (let i = 1; i <= 10; i++) {
   shopItems.push(new ShopItem({
     id: `bateau_${i}`,
@@ -42,45 +42,64 @@ for (let i = 1; i <= 10; i++) {
   }));
 }
 
-// Log Pose
+// 🧭 Log Pose
 shopItems.push(new ShopItem({
   id: "log_pos",
   name: "Log Pose",
   description: "Affiche la durée des événements et les chances d'apparition.",
-  category: "boost",
+  category: "special",
   costPerDay: 0,
   effect: () => { player.hasLogPose = true; },
   unlockCondition: () => !player.hasLogPose
 }));
 
-// Boosts de compétences
-const baseSkills = ["force", "agilite", "vitalite", "vigueur", "intelligence", "endurance", "dexterite"];
-baseSkills.forEach(skill => {
+// ⚔️ Boosts de compétences par stat, effet exponentiel
+const baseSkills = [
+  { id: "force", label: "Force" },
+  { id: "agilite", label: "Agilité" },
+  { id: "vitalite", label: "Vitalité" },
+  { id: "vigueur", label: "Vigueur" },
+  { id: "intelligence", label: "Intelligence" },
+  { id: "endurance", label: "Endurance" },
+  { id: "dexterite", label: "Dextérité" }
+];
+
+baseSkills.forEach(({ id, label }) => {
   for (let i = 1; i <= 10; i++) {
+    const boostValue = 0.005 * Math.pow(2, i - 1); // double à chaque boost
+    const cost = i;
+
     shopItems.push(new ShopItem({
-      id: `${skill}_boost_${i}`,
-      name: `${skill.charAt(0).toUpperCase() + skill.slice(1)} Boost ${i}`,
-      description: `Boost ${skill} de +${(0.005 * i).toFixed(3)} par tick.`,
-      category: "boost",
-      costPerDay: i,
-      effect: () => player.skills[skill].baseXpGain += 0.005 * i,
-      unlockCondition: () => player.skills[skill].level >= i * 2
+      id: `${id}_boost_${i}`,
+      name: `${label} Boost ${i}`,
+      description: `Boost ${label.toLowerCase()} de +${boostValue.toFixed(3)} par tick.`,
+      category: id,
+      costPerDay: cost,
+      effect: () => player.skills[id].baseXpGain += boostValue,
+      unlockCondition: () => player.skills[id]?.level >= i * 10 // MASQUÉ si non débloqué
     }));
   }
 });
 
-// Affichage
+// 🔢 Calcul total coût actif
 function getTotalShopCost() {
   return shopItems.filter(i => i.isActive).reduce((sum, i) => sum + i.costPerDay, 0);
 }
 
+// 🖼️ Affichage boutique
 function renderShop() {
   const container = document.getElementById("shop-items");
   container.innerHTML = "";
 
   const grouped = {
     bateau: "Bateaux (Bonheur)",
-    boost: "Boosts de compétences"
+    force: "Boosts de Force",
+    agilite: "Boosts d’Agilité",
+    vitalite: "Boosts de Vitalité",
+    vigueur: "Boosts de Vigueur",
+    intelligence: "Boosts d’Intelligence",
+    endurance: "Boosts d’Endurance",
+    dexterite: "Boosts de Dextérité"
   };
 
   const totalCost = getTotalShopCost();
@@ -115,12 +134,14 @@ function renderShop() {
   }
 }
 
+// 🧩 Activation / désactivation d’un item
 function toggleShopItem(id) {
   const item = shopItems.find(i => i.id === id);
   if (item) item.toggleActive();
   updateUI();
 }
 
+// 💸 Débit automatique journalier (appelé dans updateGameLoop)
 function manageShopItems() {
   shopItems.forEach(item => {
     if (!item.isActive) return;
@@ -131,6 +152,7 @@ function manageShopItems() {
       showToast(`💸 ${item.name} désactivé automatiquement (plus de berries)`);
     } else {
       player.berries -= cost;
+
       if (!isFinite(player.berries) || player.berries < -10000) {
         item.isActive = false;
         player.berries = 0;
@@ -140,6 +162,7 @@ function manageShopItems() {
   });
 }
 
+// 🌐 Exposer
 window.renderShop = renderShop;
 window.toggleShopItem = toggleShopItem;
 window.manageShopItems = manageShopItems;

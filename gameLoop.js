@@ -35,12 +35,12 @@ function checkJobEvolution() {
     const jobActif = !!player.currentJobId;
     const skillActif = !!player.currentSkillId && player.skills[player.currentSkillId]?.unlocked;
   
-    // Avancer le temps
+    // ⏱️ Avancer le temps
     if (jobActif || skillActif) {
       player.day += applySpeed(1);
     }
   
-    // Exécution du job
+    // 💼 Exécution du job
     if (jobActif) {
       const job = jobs.find(j => j.id === player.currentJobId);
       if (job) {
@@ -49,7 +49,7 @@ function checkJobEvolution() {
       }
     }
   
-    // Gain de compétence
+    // 📚 XP compétence active
     if (skillActif) {
       const skill = player.skills[player.currentSkillId];
       const gain = applySpeed(skill.getXpGain?.() || 0) * 5;
@@ -63,6 +63,7 @@ function checkJobEvolution() {
         skill.level++;
       }
   
+      // UI barre de compétence
       const bar = document.getElementById("current-skill-bar");
       if (bar) bar.style.width = `${skill.getProgress()}%`;
   
@@ -70,7 +71,7 @@ function checkJobEvolution() {
       if (skillDisplay) skillDisplay.textContent = `${skill.name} (Nv. ${skill.level})`;
     }
   
-    // 🛒 Consommation shop 1x par jour
+    // 🛒 SHOP – Consommer coût par jour
     if (typeof player.lastShopCheckDay === "undefined") {
       player.lastShopCheckDay = Math.floor(player.day);
     }
@@ -78,10 +79,10 @@ function checkJobEvolution() {
     const currentDay = Math.floor(player.day);
     if (currentDay > player.lastShopCheckDay) {
       player.lastShopCheckDay = currentDay;
-      manageShopItems(); // ✅ Consomme le coût par jour
+      manageShopItems();
     }
   
-    // 🎁 Événements
+    // 🎁 Événement journalier (bonus ou malus)
     if (player.dailyBonus?.duration > 0) {
       player.dailyBonus.duration--;
       if (player.dailyBonus.duration <= 0) {
@@ -90,7 +91,7 @@ function checkJobEvolution() {
       }
     }
   
-    // Âge & mort
+    // 👴 Vieillissement + mort
     if (jobActif || skillActif) {
       const totalDays = Math.floor(player.day);
       player.age = 14 + Math.floor(totalDays / 365);
@@ -120,6 +121,7 @@ function checkJobEvolution() {
   
     updateUI();
   }
+  
   
   
   
