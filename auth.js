@@ -11,7 +11,8 @@ function loginWithDiscord() {
   window.location.href = discordUrl;
 }
 
-function checkLogin() {
+async function checkLogin() {
+
   console.log("⚡ checkLogin() appelé automatiquement");
 
   // 1. Vérifie si déjà stocké localement
@@ -26,7 +27,7 @@ function checkLogin() {
     console.log("✅ currentUserId récupéré depuis localStorage :", currentUserId);
 
     document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
-    loadPlayerData(currentUserId);
+    await loadPlayerData(currentUserId);
 
     // Nettoyer l’URL s’il y avait un hash
     window.history.replaceState({}, document.title, window.location.pathname);
