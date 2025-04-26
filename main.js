@@ -439,16 +439,6 @@ function applyFactionBonusesToQuest(baseReward, baseDuration) {
 
 setInterval(autoSaveLoop, 10000);
 
-window.addEventListener("DOMContentLoaded", () => {
-  updateUI();
-
-  setTimeout(() => {
-    if (typeof player !== "undefined") {
-      setInterval(updateGameLoop, 1000 / updateSpeed);
-    }
-  }, 100);
-});
-
 function startSmoothGameLoop() {
   let lastTick = performance.now();
 
