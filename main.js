@@ -468,9 +468,13 @@ function startSmoothGameLoop() {
     const daysPerSecond = 1;
 
     // Avancer le temps seulement si un job ou une skill est active
-    if (player.currentJobId || player.currentSkillId) {
+    const jobActif = player.currentJobId !== null;
+    const skillActif = player.currentSkillId !== null && player.skills[player.currentSkillId]?.unlocked;
+
+    if (jobActif || skillActif) {
       player.day += daysPerSecond * delta;
     }
+
 
     if (player.dayVisual === undefined) player.dayVisual = 1;
     if (player.day >= player.dayVisual + 1) {
