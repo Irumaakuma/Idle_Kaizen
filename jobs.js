@@ -239,11 +239,13 @@ function renderJobs() {
 
     jobs.filter(job => job.group === groupKey).forEach(job => {
       const skill = job.requiredSkill ? player.skills[job.requiredSkill] : null;
-      if (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel) return;
+      const isCurrent = player.currentJobId === job.id;
+      if (!isCurrent && (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel)) return;
+
 
       job.loadSavedData();
       const revenuParJour = applySpeed(job.getIncome());
-      const isCurrent = player.currentJobId === job.id;
+      
       
       groupContent += `
         <div class="job-entry ${isCurrent ? 'active-job' : ''}">
