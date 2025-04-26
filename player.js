@@ -14,7 +14,7 @@ const player = {
 
   // 🕒 Système de temps
   day: 1,
-  age: 0,
+  age: 14,         // ⚠️ Âge de départ fixé à 14 ans
   maxAge: 30,     // ⚠️ Limite de vie fixée à 30 ans
   dead: false,     // ⚠️ Flag pour gérer la mort
 
