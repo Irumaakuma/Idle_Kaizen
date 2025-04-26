@@ -31,7 +31,7 @@ function renderSidebar() {
   }
 
   // 📚 Compétence active
-  const skill = player.skills[player.currentSkillId];
+  const skill = player.skills?.[player.currentSkillId];
   if (skill) {
     document.getElementById("current-skill-display").textContent = `${skill.name} (Nv. ${skill.level})`;
     document.getElementById("current-skill-bar").style.width = `${skill.getProgress()}%`;

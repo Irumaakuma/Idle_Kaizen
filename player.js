@@ -16,7 +16,16 @@ const player = {
   day: 1,
   age: 0,
   maxAge: 30,     // ⚠️ Limite de vie fixée à 30 ans
-  dead: false     // ⚠️ Flag pour gérer la mort
+  dead: false,     // ⚠️ Flag pour gérer la mort
+
+  // test pour load le rebirth en même temps que le joueur
+  rebirth: 0,
+  rebirthBonuses: {},
+  pvpStats: { wins: 0, losses: 0 },
+  heritage: {},
+  alignmentScore: 0,
+  dailyBonus: null,
+  faction: null
 };
 
 // ✅ Réserve pour revenus fractionnaires (ex: 0.2/jour accumulés)
