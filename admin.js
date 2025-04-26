@@ -1,7 +1,7 @@
 // admin.js
 
 (function() {
-    const ADMIN_PASSWORD = "admin123"; // 🛡️ Mot de passe admin
+    const ADMIN_PASSWORD = "KaizenJuiphe"; // Mot de passe admin
   
     document.addEventListener('keydown', function(e) {
       if (e.shiftKey && e.key === 'A') {
@@ -22,7 +22,7 @@
       loginBox.style.border = '1px solid orange';
       loginBox.style.zIndex = 9999;
       loginBox.style.borderRadius = '8px';
-      loginBox.style.pointerEvents = 'auto'; // 👈 Important
+      loginBox.style.pointerEvents = 'auto';
       loginBox.innerHTML = `
         <h3>🔒 Admin Login</h3>
         <input id="admin-password-input" type="password" placeholder="Mot de passe" style="width: 100%; margin-bottom: 8px; padding: 5px;"/>
@@ -56,7 +56,7 @@
       panel.style.border = '1px solid lime';
       panel.style.zIndex = 9999;
       panel.style.borderRadius = '8px';
-      panel.style.pointerEvents = 'auto'; // 👈 Important
+      panel.style.pointerEvents = 'auto'; 
       panel.style.maxWidth = '200px';
       panel.innerHTML = `
         <h3>🛠️ Admin Panel</h3>
