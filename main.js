@@ -37,23 +37,17 @@ function updateUI() {
   if (player.dead) {
     if (rebirthBox) rebirthBox.style.display = "block";
   
-    // 🔒 Lock interface
-    document.querySelectorAll("#tabs button").forEach(btn => {
-      if (!btn.textContent.includes("Paramètres")) {
-        btn.disabled = true;
-        btn.style.opacity = 0.4;
-        btn.style.pointerEvents = "none";
-      }
-    });
-  
-    switchTab("settings");
-  } else {
-    if (rebirthBox) rebirthBox.style.display = "none";
+    if (rebirthBox && rebirthBox.style.display !== "block") {
+      document.querySelectorAll("#tabs button").forEach(btn => {
+        if (!btn.textContent.includes("Paramètres")) {
+          btn.disabled = true;
+          btn.style.opacity = 0.4;
+          btn.style.pointerEvents = "none";
+        }
+      });
+      switchTab("settings");
+    }
   }
-  
-  
-
-
 }
 
 function togglePvpButton() {
