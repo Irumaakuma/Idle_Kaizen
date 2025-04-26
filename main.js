@@ -466,7 +466,11 @@ function startSmoothGameLoop() {
 
     // 🕒 Avancer le temps à rythme FIXE (1 jour / seconde)
     const daysPerSecond = 1;
-    player.day += daysPerSecond * delta;
+
+    // Avancer le temps seulement si un job ou une skill est active
+    if (player.currentJobId || player.currentSkillId) {
+      player.day += daysPerSecond * delta;
+    }
 
     if (player.dayVisual === undefined) player.dayVisual = 1;
     if (player.day >= player.dayVisual + 1) {
