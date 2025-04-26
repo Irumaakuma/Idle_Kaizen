@@ -1,7 +1,7 @@
 (() => {
     console.log("%c🛡️ Anti-triche actif", "color: lime; font-size: 16px;");
   
-    // Utilitaire de protection via Proxy
+    // Utilitare de protection via Proxy
     function protectFunction(fnName, originalFn) {
       if (typeof originalFn !== "function") return;
   
