@@ -263,10 +263,15 @@ function renderJobs() {
 }
 
 function selectJob(jobId) {
+  console.log("➡️ Job sélectionné :", jobId);
+
   if (player.currentJobId === jobId) {
+    console.log("🔴 Job annulé !");
     player.currentJobId = null;
   } else {
+    console.log("🟢 Nouveau job activé !");
     player.currentJobId = jobId;
   }
+  
   updateUI();
 }
