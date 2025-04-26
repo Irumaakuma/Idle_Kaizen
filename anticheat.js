@@ -1,4 +1,4 @@
-(() => {
+/* (() => {
     console.log("%c🛡️ Anti-triche actif", "color: lime; font-size: 16px;");
   
     // Utilitare de protection via Proxy
@@ -56,4 +56,4 @@
       }
     }, 1000);
   })();
-  
+  */
