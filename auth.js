@@ -91,11 +91,11 @@ async function loadPlayerData(userId) {
       jobs: data.jobs || {}
     });
 
-    // 🛡️ Vérification importante : Forcer faction = "Civil" si elle est absente
-    if (!player.faction) {
-      console.warn("⚠️ Faction absente détectée. Remise à Civil.");
+    if (!player.faction || player.faction === null) {
+      console.warn("⚠️ Faction absente détectée. Correction automatique en 'Civil'.");
       player.faction = "Civil";
     }
+    
 
     // ✅ Chargement des skills
     player.skills = {};

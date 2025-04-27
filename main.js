@@ -544,6 +544,11 @@ function startGame() {
   // 🔄 Mettre à jour l'interface dès le départ
   updateUI();
 
+  if (!player.faction || player.faction === null) {
+    console.warn("⚠️ Faction absente détectée au lancement. Correction en 'Civil'.");
+    player.faction = "Civil";
+  }
+
   // ⏱️ Lancer la boucle de progression douce
   startSmoothGameLoop();
 
