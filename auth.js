@@ -1,4 +1,4 @@
-// auth.js amélioré et corrigé
+// auth.js v2 - COMPLET, corrigé et turbo optimisé
 
 let currentUserId = null;
 let currentUsername = null;
@@ -43,7 +43,7 @@ async function checkLogin() {
   }
 
   console.log("🔐 Aucune session détectée — affichage du bouton login");
-  document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
+  document.getElementById("login-area").innerHTML = `<button onclick=\"loginWithDiscord()\">Se connecter avec Discord</button>`;
 }
 
 async function loadPlayerData(userId) {
@@ -123,6 +123,79 @@ async function loadPlayerData(userId) {
   }
 }
 
+async function savePlayerData(userId) {
+  const skillsData = {};
+  for (let id in player.skills) {
+    const s = player.skills[id];
+    skillsData[id] = {
+      id: s.id,
+      name: s.name,
+      level: s.level,
+      xp: s.xp,
+      baseXpGain: s.baseXpGain,
+      baseEffect: s.baseEffect,
+      group: s.group,
+      unlocked: s.unlocked
+    };
+  }
+
+  const data = {
+    name: player.name,
+    berries: player.berries,
+    xp: player.xp,
+    level: player.level,
+    currentJobId: player.currentJobId,
+    currentSkillId: player.currentSkillId,
+    jobs: player.jobs,
+    skills: skillsData,
+    questsCompleted: player.questsCompleted,
+    happiness: player.happiness,
+    hasLogPose: player.hasLogPose,
+    day: player.day,
+    dayVisual: player.dayVisual ?? player.day,
+    age: player.age,
+    maxAge: player.maxAge,
+    dead: player.dead,
+    faction: player.faction,
+    alignmentScore: player.alignmentScore,
+    rebirthCount: player.rebirthCount,
+    rebirthBonuses: player.rebirthBonuses,
+    dailyBonus: player.dailyBonus,
+    heritage: player.heritage,
+    pvpStats: player.pvpStats,
+    _haki_armement_trigger: player._haki_armement_trigger,
+    _haki_observation_trigger: player._haki_observation_trigger,
+    activeShopItems: shopItems.filter(i => i.isActive).map(i => i.id)
+  };
+
+  try {
+    const res = await fetch(`https://kaizen-backend-fkod.onrender.com/save/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": userId
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+      const now = new Date().toLocaleTimeString();
+      const saveDisplay = document.getElementById("last-save");
+      if (saveDisplay) {
+        saveDisplay.textContent = `💾 Sauvegarde : ${now}`;
+      }
+      console.log("✅ Données sauvegardées avec succès !");
+    } else {
+      const errText = await res.text();
+      console.warn("❌ Sauvegarde échouée :", errText);
+      showToast("❌ Erreur lors de la sauvegarde !");
+    }
+  } catch (err) {
+    console.error("❌ Erreur réseau lors de la sauvegarde :", err);
+    showToast("❌ Échec de la sauvegarde !");
+  }
+}
+
 function forceSave() {
   if (currentUserId) {
     savePlayerData(currentUserId);
@@ -148,4 +221,9 @@ function forceSave() {
   }
 }
 
-window.addEventListener("DOMContentLoaded", checkLogin);
+window.addEventListener("DOMContentLoaded", () => {
+  if (!window._checkLoginDone) {
+    window._checkLoginDone = true;
+    checkLogin();
+  }
+});
