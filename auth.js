@@ -82,7 +82,7 @@ async function loadPlayerData(userId) {
       rebirthCount: data.rebirthCount || 0,
       rebirthBonuses: data.rebirthBonuses || {},
       dailyBonus: data.dailyBonus || null,
-      faction: data.faction || "Civil",
+      faction: data.faction || null, // 👈 on récupère, même si c'est null
       heritage: data.heritage || {},
       pvpStats: data.pvpStats || {},
       queuedIncome: data.queuedIncome || 0,
@@ -91,6 +91,13 @@ async function loadPlayerData(userId) {
       jobs: data.jobs || {}
     });
 
+    // 🛡️ Vérification importante : Forcer faction = "Civil" si elle est absente
+    if (!player.faction) {
+      console.warn("⚠️ Faction absente détectée. Remise à Civil.");
+      player.faction = "Civil";
+    }
+
+    // ✅ Chargement des skills
     player.skills = {};
     for (let id in data.skills) {
       const s = data.skills[id];
@@ -106,6 +113,7 @@ async function loadPlayerData(userId) {
       player.skills[id].xp = s.xp;
     }
 
+    // ✅ Réactivation des items boutique
     if (Array.isArray(data.activeShopItems)) {
       shopItems.forEach(item => {
         if (data.activeShopItems.includes(item.id)) {
@@ -122,6 +130,7 @@ async function loadPlayerData(userId) {
     startGame();
   }
 }
+
 
 async function savePlayerData(userId) {
   const skillsData = {};

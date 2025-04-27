@@ -529,18 +529,26 @@ function startSmoothGameLoop() {
 function startGame() {
   console.log("🚀 Lancement du jeu avec currentUserId =", currentUserId);
 
-  updateUI(); // met à jour tout ce qu’on peut au début
+  // 🛡️ Corrige la faction si elle est absente
+  if (!player.faction) {
+    console.warn("⚠️ Faction absente détectée. Remise à Civil.");
+    player.faction = "Civil";
+  }
 
-  // ⏱️ Boucle de progression fluide façon Progress Knight
+  // 🔄 Mise à jour initiale de toute l'interface
+  updateUI();
+
+  // ⏱️ Démarrage de la boucle de progression fluide
   startSmoothGameLoop();
 
-  // 🎲 Déclenchement d’un événement aléatoire toutes les 10 secondes réelles
+  // 🎲 Démarrage des événements aléatoires toutes les 10 secondes
   setInterval(() => {
     if (!player.dead) {
-      triggerDailyEvent(); // tente un bonus/malus
+      triggerDailyEvent();
     }
-  }, 10000); // 10 secondes IRL
+  }, 10000);
 }
+
 
 
 window.addEventListener("DOMContentLoaded", () => {
