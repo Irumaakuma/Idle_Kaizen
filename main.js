@@ -529,19 +529,25 @@ function startSmoothGameLoop() {
 function startGame() {
   console.log("🚀 Lancement du jeu avec currentUserId =", currentUserId);
 
-  // 🛡️ Corrige la faction si elle est absente
+  // 🛡️ Si la faction est absente, on la remet à Civil
   if (!player.faction) {
-    console.warn("⚠️ Faction absente détectée. Remise à Civil.");
+    console.warn("⚠️ Faction absente, remise à Civil.");
     player.faction = "Civil";
   }
 
-  // 🔄 Mise à jour initiale de toute l'interface
+  // 🛡️ Si le joueur est mort par erreur, on le remet vivant
+  if (player.dead === undefined || player.dead === true) {
+    console.warn("⚠️ Mort détectée au lancement. Remise en vie forcée.");
+    player.dead = false;
+  }
+
+  // 🔄 Mettre à jour l'interface dès le départ
   updateUI();
 
-  // ⏱️ Démarrage de la boucle de progression fluide
+  // ⏱️ Lancer la boucle de progression douce
   startSmoothGameLoop();
 
-  // 🎲 Démarrage des événements aléatoires toutes les 10 secondes
+  // 🎲 Lancer les événements aléatoires toutes les 10 secondes
   setInterval(() => {
     if (!player.dead) {
       triggerDailyEvent();
