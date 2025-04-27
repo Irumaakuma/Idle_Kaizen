@@ -12,6 +12,36 @@ function loginWithDiscord() {
   window.location.href = discordUrl;
 }
 
+function initializeNewPlayer() {
+  player = {
+    name: "Joueur",
+    berries: 0,
+    xp: 0,
+    level: 1,
+    job: "Civil",
+    currentJobId: null,
+    currentSkillId: null,
+    day: 1,
+    dayVisual: 1,
+    age: 14,
+    maxAge: 30,
+    dead: false,
+    happiness: 1,
+    alignmentScore: 0,
+    rebirthCount: 0,
+    rebirthBonuses: {},
+    dailyBonus: null,
+    faction: "Civil",
+    heritage: {},
+    pvpStats: {},
+    queuedIncome: 0,
+    queuedSkillXp: 0,
+    questsCompleted: [],
+    skills: {}, 
+    jobs: {}
+  };
+}
+
 async function checkLogin() {
   console.log("⚡ checkLogin() appelé automatiquement");
 
@@ -26,8 +56,8 @@ async function checkLogin() {
     console.log("✅ currentUserId récupéré depuis localStorage :", currentUserId);
     document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
 
-    // 🔥 ATTENTION : attendre que les données soient vraiment chargées
-    await loadPlayerData(currentUserId); 
+    // 🔥 Charger la sauvegarde Discord
+    await loadPlayerData(currentUserId);
     return;
   }
 
@@ -43,8 +73,13 @@ async function checkLogin() {
     return;
   }
 
-  console.log("🔐 Aucune session détectée — affichage du bouton login");
+  console.log("🔐 Aucune session Discord détectée — jeu local temporaire");
+  
   document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
+
+  // ➡️ Nouveauté : créer un joueur par défaut et démarrer le jeu même sans connexion Discord
+  initializeNewPlayer();
+  startGame();
 }
 
 async function loadPlayerData(userId) {
