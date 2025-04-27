@@ -597,21 +597,31 @@ window.unlockSkillsProgressively = unlockSkillsProgressively;
 window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
 window.sendPvpNotification = sendPvpNotification;
 
-document.body.addEventListener('click', function(e) {
-  const target = e.target;
+// 🔥 Écouteur global pour tous les clics
+document.body.addEventListener('click', function(event) {
+  const target = event.target;
 
-  // Clic sur un bouton de job
+  // Si clic sur un bouton de Job
   if (target.classList.contains('job-button')) {
     const jobId = target.dataset.jobId;
     if (jobId) {
       selectJob(jobId);
     }
   }
-  
-  if (target.classList.contains('skill-entry')) {
-    const skillId = target.getAttribute('onclick')?.match(/selectSkill\('([^']+)'\)/)?.[1];
+
+  // Si clic sur un bouton de Skill
+  if (target.classList.contains('skill-button')) {
+    const skillId = target.dataset.skillId;
     if (skillId) {
       selectSkill(skillId);
+    }
+  }
+
+  // Si clic sur un bouton d'onglet
+  if (target.classList.contains('tab-button')) {
+    const tabName = target.dataset.tab;
+    if (tabName) {
+      switchTab(tabName);
     }
   }
 });
