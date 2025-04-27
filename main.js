@@ -587,6 +587,16 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+window.updateUI = updateUI;
+window.switchTab = switchTab;
+window.triggerRebirth = triggerRebirth;
+window.challengePlayer = challengePlayer;
+window.renderPvpTab = renderPvpTab;
+window.simulateCombat = simulateCombat;
+window.unlockSkillsProgressively = unlockSkillsProgressively;
+window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
+window.sendPvpNotification = sendPvpNotification;
+
 document.body.addEventListener('click', function(e) {
   const target = e.target;
 
@@ -597,14 +607,11 @@ document.body.addEventListener('click', function(e) {
       selectJob(jobId);
     }
   }
+  
+  if (target.classList.contains('skill-entry')) {
+    const skillId = target.getAttribute('onclick')?.match(/selectSkill\('([^']+)'\)/)?.[1];
+    if (skillId) {
+      selectSkill(skillId);
+    }
+  }
 });
-
-window.updateUI = updateUI;
-window.switchTab = switchTab;
-window.triggerRebirth = triggerRebirth;
-window.challengePlayer = challengePlayer;
-window.renderPvpTab = renderPvpTab;
-window.simulateCombat = simulateCombat;
-window.unlockSkillsProgressively = unlockSkillsProgressively;
-window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
-window.sendPvpNotification = sendPvpNotification;
