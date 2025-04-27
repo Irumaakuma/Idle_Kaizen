@@ -12,6 +12,36 @@ function loginWithDiscord() {
   window.location.href = discordUrl;
 }
 
+function initializeNewPlayer() {
+  player = {
+    name: "Joueur",
+    berries: 0,
+    xp: 0,
+    level: 1,
+    job: "Civil",
+    currentJobId: null,
+    currentSkillId: null,
+    day: 1,
+    dayVisual: 1,
+    age: 14,
+    maxAge: 30,
+    dead: false,
+    happiness: 1,
+    alignmentScore: 0,
+    rebirthCount: 0,
+    rebirthBonuses: {},
+    dailyBonus: null,
+    faction: "Civil",
+    heritage: {},
+    pvpStats: {},
+    queuedIncome: 0,
+    queuedSkillXp: 0,
+    questsCompleted: [],
+    skills: {}, 
+    jobs: {}
+  };
+}
+
 async function checkLogin() {
   console.log("⚡ checkLogin() appelé automatiquement");
 
