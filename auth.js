@@ -48,6 +48,9 @@ async function checkLogin() {
 }
 
 async function loadPlayerData(userId) {
+  const loadingScreen = document.getElementById("loading-screen");
+  loadingScreen.style.display = "flex"; 
+  
   try {
     const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
       headers: { Authorization: userId }

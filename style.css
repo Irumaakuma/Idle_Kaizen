@@ -204,3 +204,19 @@ button.danger:hover {
   margin-bottom: 10px;
   display: block;
 }
+
+#loading-screen {
+  font-size: 1.5rem;
+  background-color: #0f172a; /* Bleu-noir foncé élégant */
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+#loading-screen p {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
