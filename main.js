@@ -551,6 +551,10 @@ function startGame() {
     player.faction = "Civil";
   }
 
+  const loadingScreen = document.getElementById("loading-screen");
+  if (loadingScreen) {
+    loadingScreen.style.display = "none"; // Cacher l'écran de chargement
+  }
 
   // 🔄 Mettre à jour l'interface dès le départ
   updateUI();
