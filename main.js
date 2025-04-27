@@ -34,7 +34,7 @@ function updateUI() {
 
   const rebirthBox = document.getElementById("rebirth-section");
 
-  /*if (player.dead) {
+  if (player.dead) {
     if (rebirthBox) rebirthBox.style.display = "block";
   
     if (rebirthBox && rebirthBox.style.display !== "block") {
@@ -47,7 +47,7 @@ function updateUI() {
       });
       switchTab("settings");
     }
-  } */
+  } 
 }
 
 function togglePvpButton() {
