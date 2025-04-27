@@ -541,13 +541,20 @@ function startGame() {
     player.dead = false;
   }
 
-  // 🔄 Mettre à jour l'interface dès le départ
-  updateUI();
-
+  if (!player.skills || Object.keys(player.skills).length === 0) {
+    console.warn("⚠️ Skills vides détectés. Initialisation de base.");
+    player.skills = structuredClone(window.defaultSkills);
+  }
+  
   if (!player.faction || player.faction === null) {
     console.warn("⚠️ Faction absente détectée au lancement. Correction en 'Civil'.");
     player.faction = "Civil";
   }
+
+
+  // 🔄 Mettre à jour l'interface dès le départ
+  updateUI();
+
 
   // ⏱️ Lancer la boucle de progression douce
   startSmoothGameLoop();
