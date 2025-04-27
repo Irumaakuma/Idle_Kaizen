@@ -244,7 +244,7 @@ function renderJobs() {
 
       job.loadSavedData();
       const revenuParJour = applySpeed(job.getIncome());
-      
+
       groupContent += `
         <div class="job-entry ${isCurrent ? 'active-job' : ''}">
           <strong>${job.name}</strong> (Niveau ${job.level}) - ${formatCurrency(revenuParJour)} 💰 / jour
@@ -261,6 +261,7 @@ function renderJobs() {
     }
   }
 }
+
 
 function selectJob(jobId) {
   console.log("➡️ Job sélectionné :", jobId);
