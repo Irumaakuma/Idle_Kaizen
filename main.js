@@ -587,8 +587,17 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+document.body.addEventListener('click', function(e) {
+  const target = e.target;
 
-
+  // Clic sur un bouton de job
+  if (target.classList.contains('job-button')) {
+    const jobId = target.dataset.jobId;
+    if (jobId) {
+      selectJob(jobId);
+    }
+  }
+});
 
 window.updateUI = updateUI;
 window.switchTab = switchTab;

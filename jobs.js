@@ -242,10 +242,8 @@ function renderJobs() {
       const isCurrent = player.currentJobId === job.id;
       if (!isCurrent && (!skill || !skill.unlocked || skill.level < job.skillRequired || player.jobs[job.id]?.level < job.requiredLevel)) return;
 
-
       job.loadSavedData();
       const revenuParJour = applySpeed(job.getIncome());
-      
       
       groupContent += `
         <div class="job-entry ${isCurrent ? 'active-job' : ''}">
@@ -253,7 +251,7 @@ function renderJobs() {
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" style="width: ${job.getProgress()}%; background: #ff6f00;"></div>
           </div>
-          <button onclick="selectJob('${job.id}')">${isCurrent ? 'Annuler' : 'Choisir'}</button>
+          <button class="job-button" data-job-id="${job.id}">${isCurrent ? 'Annuler' : 'Choisir'}</button>
         </div>
       `;
     });
