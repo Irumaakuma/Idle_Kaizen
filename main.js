@@ -22,6 +22,7 @@ function sendPvpNotification(killer, victim) {
 
 
 function updateUI() {
+  console.log("le fdp de uptate UI est appelé");
   renderStats();
   renderJobs();
   renderSidebar();
