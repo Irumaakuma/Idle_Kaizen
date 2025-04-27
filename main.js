@@ -517,7 +517,6 @@ function startSmoothGameLoop() {
       triggerRebirth();
     }
 
-    updateUI();
     requestAnimationFrame(loop);
   }
 

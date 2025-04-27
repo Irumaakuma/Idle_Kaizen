@@ -129,12 +129,6 @@ function checkJobEvolution() {
     updateUI();
   }
   
-  
-  
-  
-  
-  
-  
   function triggerRebirth() {
     player.rebirth = (player.rebirth || 0) + 1;
   
