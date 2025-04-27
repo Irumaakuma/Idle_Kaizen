@@ -48,6 +48,9 @@ async function checkLogin() {
 }
 
 async function loadPlayerData(userId) {
+  const loadingScreen = document.getElementById("loading-screen");
+  if (loadingScreen) loadingScreen.style.display = "flex"; // Affiche écran chargement si pas déjà visible
+  
   try {
     const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
       headers: { Authorization: userId }
@@ -55,50 +58,45 @@ async function loadPlayerData(userId) {
 
     if (!res.ok) {
       console.log("🆕 Aucun fichier trouvé, création d'un nouveau joueur.");
-      return startGame();
+      initializeNewPlayer();
+      startGame();
+      return;
     }
 
     const data = await res.json();
     if (!data || typeof data !== "object") {
       console.warn("⚠️ Réponse inattendue, nouveau joueur.");
-      return startGame();
+      initializeNewPlayer();
+      startGame();
+      return;
     }
 
-    Object.assign(player, {
-      name: data.name || "Joueur",
-      berries: data.berries || 0,
-      xp: data.xp || 0,
-      level: data.level || 1,
-      job: data.job || "Civil",
-      currentJobId: data.currentJobId || null,
-      currentSkillId: data.currentSkillId || null,
-      day: data.day ?? 1,
-      dayVisual: data.dayVisual ?? data.day ?? 1,
-      age: data.age || 0,
-      maxAge: data.maxAge || 30,
-      dead: data.dead || false,
-      hasLogPose: data.hasLogPose || false,
-      happiness: data.happiness || 1,
-      alignmentScore: data.alignmentScore || 0,
-      rebirthCount: data.rebirthCount || 0,
-      rebirthBonuses: data.rebirthBonuses || {},
-      dailyBonus: data.dailyBonus || null,
-      faction: data.faction || null, // 👈 on récupère, même si c'est null
-      heritage: data.heritage || {},
-      pvpStats: data.pvpStats || {},
-      queuedIncome: data.queuedIncome || 0,
-      queuedSkillXp: data.queuedSkillXp || 0,
-      questsCompleted: data.questsCompleted || [],
-      jobs: data.jobs || {}
-    });
+    // ➡️ Reconstruction sécurisée du player
+    player.name = data.name || "Joueur";
+    player.berries = data.berries || 0;
+    player.xp = data.xp || 0;
+    player.level = data.level || 1;
+    player.job = data.job || "Civil";
+    player.currentJobId = data.currentJobId || null;
+    player.currentSkillId = data.currentSkillId || null;
+    player.day = data.day ?? 1;
+    player.dayVisual = data.dayVisual ?? data.day ?? 1;
+    player.age = data.age || 14;
+    player.maxAge = data.maxAge || 30;
+    player.dead = data.dead || false;
+    player.happiness = data.happiness || 1;
+    player.alignmentScore = data.alignmentScore || 0;
+    player.rebirthCount = data.rebirthCount || 0;
+    player.rebirthBonuses = data.rebirthBonuses || {};
+    player.dailyBonus = data.dailyBonus || null;
+    player.faction = data.faction || "Civil";
+    player.heritage = data.heritage || {};
+    player.pvpStats = data.pvpStats || {};
+    player.queuedIncome = data.queuedIncome || 0;
+    player.queuedSkillXp = data.queuedSkillXp || 0;
+    player.questsCompleted = data.questsCompleted || [];
 
-    if (!player.faction || player.faction === null) {
-      console.warn("⚠️ Faction absente détectée. Correction automatique en 'Civil'.");
-      player.faction = "Civil";
-    }
-    
-
-    // ✅ Chargement des skills
+    // 🛠️ Reconstruction complète des skills
     player.skills = {};
     for (let id in data.skills) {
       const s = data.skills[id];
@@ -114,7 +112,25 @@ async function loadPlayerData(userId) {
       player.skills[id].xp = s.xp;
     }
 
-    // ✅ Réactivation des items boutique
+    // 🛠️ Reconstruction complète des jobs
+    player.jobs = {};
+    for (let id in data.jobs) {
+      const j = data.jobs[id];
+      player.jobs[id] = {
+        id: j.id,
+        name: j.name,
+        level: j.level,
+        xp: j.xp,
+        requiredSkill: j.requiredSkill,
+        group: j.group,
+        upgradesTo: j.upgradesTo || null,
+        run: jobs.find(job => job.id === id)?.run || function() {
+          console.warn("⚠️ Fonction run() manquante pour job :", id);
+        }
+      };
+    }
+
+    // 🛒 Réactivation des items boutique
     if (Array.isArray(data.activeShopItems)) {
       shopItems.forEach(item => {
         if (data.activeShopItems.includes(item.id)) {
@@ -123,14 +139,16 @@ async function loadPlayerData(userId) {
       });
     }
 
-    console.log("✅ Données chargées avec succès !");
-    startGame();
+    console.log("✅ Données restaurées avec succès !");
+    startGame(); // ➡️ seulement après TOUT avoir reconstruit
 
   } catch (err) {
-    console.error("❌ Erreur de chargement :", err);
+    console.error("❌ Erreur lors du chargement des données joueur :", err);
+    initializeNewPlayer();
     startGame();
   }
 }
+
 
 
 async function savePlayerData(userId) {
