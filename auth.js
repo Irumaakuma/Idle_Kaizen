@@ -78,9 +78,7 @@ async function checkLogin() {
 }
 
 async function loadPlayerData(userId) {
-  const loadingScreen = document.getElementById("loading-screen");
-  if (loadingScreen) loadingScreen.style.display = "flex"; // Affiche écran chargement si pas déjà visible
-  
+
   try {
     const res = await fetch(`https://kaizen-backend-fkod.onrender.com/load/${userId}`, {
       headers: { Authorization: userId }
@@ -171,8 +169,9 @@ async function loadPlayerData(userId) {
 
     console.log("✅ Données restaurées avec succès !");
     startGame(); // ➡️ seulement après TOUT avoir reconstruit
-
-  } catch (err) {
+    updateUI(); // ➡️ pour mettre à jour l'interface utilisateur
+  }
+    catch (err) {
     console.error("❌ Erreur lors du chargement des données joueur :", err);
     initializeNewPlayer();
     startGame();
