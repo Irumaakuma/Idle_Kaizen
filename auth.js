@@ -25,8 +25,9 @@ async function checkLogin() {
 
     console.log("✅ currentUserId récupéré depuis localStorage :", currentUserId);
     document.getElementById("login-area").innerHTML = `✅ Connecté en tant que ${currentUsername}`;
-    await loadPlayerData(currentUserId);
-    window.history.replaceState({}, document.title, window.location.pathname);
+
+    // 🔥 ATTENTION : attendre que les données soient vraiment chargées
+    await loadPlayerData(currentUserId); 
     return;
   }
 
@@ -43,7 +44,7 @@ async function checkLogin() {
   }
 
   console.log("🔐 Aucune session détectée — affichage du bouton login");
-  document.getElementById("login-area").innerHTML = `<button onclick=\"loginWithDiscord()\">Se connecter avec Discord</button>`;
+  document.getElementById("login-area").innerHTML = `<button onclick="loginWithDiscord()">Se connecter avec Discord</button>`;
 }
 
 async function loadPlayerData(userId) {
