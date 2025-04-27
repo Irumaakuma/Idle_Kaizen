@@ -596,6 +596,9 @@ window.simulateCombat = simulateCombat;
 window.unlockSkillsProgressively = unlockSkillsProgressively;
 window.applyFactionBonusesToQuest = applyFactionBonusesToQuest;
 window.sendPvpNotification = sendPvpNotification;
+window.selectJob = selectJob;
+window.selectSkill = selectSkill;
+window.switchTab = switchTab;
 
 // 🔥 Écouteur global pour tous les clics
 document.body.addEventListener('click', function(event) {
