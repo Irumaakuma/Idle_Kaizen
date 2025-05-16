@@ -1,5 +1,5 @@
 // admin.js
-
+/*
 (function() {
     const ADMIN_PASSWORD = "KaizenJuiphe"; // Mot de passe admin
   
@@ -72,4 +72,4 @@
       document.body.appendChild(panel);
     }
   })();
-  
+  */
