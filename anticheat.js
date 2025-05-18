@@ -1,3 +1,4 @@
+/*
 (() => {
     console.log("%c🛡️ Anti-triche actif", "color: lime; font-size: 16px;");
   
@@ -56,4 +57,4 @@
       }
     }, 1000);
   })();
-  
+*/
